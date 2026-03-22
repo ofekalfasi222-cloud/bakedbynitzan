@@ -209,12 +209,16 @@ body {
   z-index: 999;
   padding: 40px 24px;
   opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
   transform: translateY(-10px);
   transition: var(--transition);
 }
 
 .mobile-menu.active {
   opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
   transform: translateY(0);
 }
 
