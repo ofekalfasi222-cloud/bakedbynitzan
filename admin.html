@@ -85,12 +85,29 @@
     .empty-state { text-align: center; padding: 60px 20px; color: #999; }
     .empty-state p { font-size: 1.1rem; margin-bottom: 16px; }
 
+    .admin-tabs { display: flex; gap: 0; background: #fff; border-bottom: 2px solid #eee; margin-bottom: 24px; border-radius: 12px 12px 0 0; overflow: hidden; }
+    .admin-tab { flex: 1; padding: 14px; border: none; background: #fff; font-family: inherit; font-size: 0.95rem; font-weight: 500; color: #999; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .admin-tab.active { color: #000; font-weight: 700; border-bottom: 3px solid #000; background: #fafafa; }
+    .admin-tab:hover { color: #000; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .settings-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .settings-section h3 { font-size: 1rem; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #eee; color: #333; }
+    .settings-section .form-group { margin-bottom: 14px; }
+    .settings-section .form-group label { font-size: 0.85rem; color: #666; }
+    .settings-section .form-group input, .settings-section .form-group textarea { font-size: 0.9rem; }
+    .btn-save-settings { width: 100%; padding: 14px; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .btn-save-settings:hover { background: #333; }
+    .btn-save-settings:disabled { background: #ccc; cursor: not-allowed; }
+
     @media (max-width: 600px) {
       .product-item { flex-wrap: wrap; }
       .product-item img { width: 60px; height: 60px; }
       .product-item-meta { width: 100%; justify-content: space-between; }
       .form-box { padding: 20px; }
       .admin-content { padding: 16px; }
+      .settings-section { padding: 16px; }
     }
   </style>
 </head>
@@ -118,14 +135,117 @@
       </div>
     </header>
     <div class="admin-content">
-      <div class="top-bar">
-        <h2>המוצרים שלי</h2>
-        <button class="btn-add" id="addProductBtn">+ מוצר חדש</button>
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="products">מוצרים</button>
+        <button class="admin-tab" data-tab="settings">הגדרות האתר</button>
       </div>
-      <div class="empty-state" id="emptyState" style="display:none;">
-        <p>אין מוצרים עדיין</p>
+
+      <div class="tab-content active" id="tab-products">
+        <div class="top-bar">
+          <h2>המוצרים שלי</h2>
+          <button class="btn-add" id="addProductBtn">+ מוצר חדש</button>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <p>אין מוצרים עדיין</p>
+        </div>
+        <div class="product-list" id="productList"></div>
       </div>
-      <div class="product-list" id="productList"></div>
+
+      <div class="tab-content" id="tab-settings">
+        <div class="settings-section">
+          <h3>קישורים ופרטי קשר</h3>
+          <div class="form-group">
+            <label>מספר וואטסאפ (עם קידומת מדינה, בלי +)</label>
+            <input type="text" id="setWhatsappNumber" placeholder="9720505851612" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>הודעת ברירת מחדל בוואטסאפ</label>
+            <input type="text" id="setWhatsappMessage" placeholder="היי ניצן! ראיתי את הקטלוג...">
+          </div>
+          <div class="form-group">
+            <label>קישור לאינסטגרם (URL מלא)</label>
+            <input type="text" id="setInstagramUrl" placeholder="https://instagram.com/..." dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>שם המשתמש באינסטגרם</label>
+            <input type="text" id="setInstagramHandle" placeholder="@Bakedbynitzan" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>מספר טלפון (להצגה)</label>
+            <input type="text" id="setPhone" placeholder="050-5851612" dir="ltr">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור הפתיחה (Hero)</h3>
+          <div class="form-group">
+            <label>משפט תיאור (מתחת ללוגו)</label>
+            <input type="text" id="setHeroTagline" placeholder="קונדיטוריה ביתית | עוגיות | עוגות | קינוחים">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור הקטלוג</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setCatalogTitle" placeholder="הקטלוג שלנו">
+          </div>
+          <div class="form-group">
+            <label>תת-כותרת</label>
+            <input type="text" id="setCatalogSubtitle" placeholder="כל המאפים נאפים טרי בהזמנה...">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור "עלינו"</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setAboutTitle" placeholder="קצת עלינו">
+          </div>
+          <div class="form-group">
+            <label>פסקה ראשונה</label>
+            <textarea id="setAboutText1" rows="3" placeholder="שלום, אני ניצן!..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>פסקה שנייה</label>
+            <textarea id="setAboutText2" rows="3" placeholder="אני מאמינה שכל אירוע..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>תכונה 1</label>
+            <input type="text" id="setAboutFeature1" placeholder="חומרי גלם איכותיים">
+          </div>
+          <div class="form-group">
+            <label>תכונה 2</label>
+            <input type="text" id="setAboutFeature2" placeholder="אפייה טרייה בהזמנה">
+          </div>
+          <div class="form-group">
+            <label>תכונה 3</label>
+            <input type="text" id="setAboutFeature3" placeholder="עבודת יד עם אהבה">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור "יצירת קשר"</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setContactTitle" placeholder="בואו נדבר">
+          </div>
+          <div class="form-group">
+            <label>תת-כותרת</label>
+            <input type="text" id="setContactSubtitle" placeholder="רוצים להזמין? יש שאלה?...">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>פוטר (תחתית האתר)</h3>
+          <div class="form-group">
+            <label>טקסט תחתון</label>
+            <input type="text" id="setFooterText" placeholder="© 2026 ניצן - משהו מתוק...">
+          </div>
+        </div>
+
+        <button class="btn-save-settings" id="saveSettingsBtn">שמירת הגדרות</button>
+      </div>
     </div>
   </div>
 
@@ -239,6 +359,7 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('adminLayout').style.display = 'block';
       loadProducts();
+      loadSettings();
     }
 
     // --- GitHub API ---
@@ -498,6 +619,93 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3000);
     }
+
+    // --- Tabs ---
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // --- Settings ---
+    let siteSettings = {};
+    let settingsSha = null;
+
+    const SETTINGS_FIELDS = [
+      'whatsappNumber', 'whatsappMessage', 'instagramUrl', 'instagramHandle',
+      'phone', 'heroTagline', 'catalogTitle', 'catalogSubtitle',
+      'aboutTitle', 'aboutText1', 'aboutText2',
+      'aboutFeature1', 'aboutFeature2', 'aboutFeature3',
+      'contactTitle', 'contactSubtitle', 'footerText'
+    ];
+
+    const SETTINGS_FIELD_MAP = {
+      whatsappNumber: 'setWhatsappNumber', whatsappMessage: 'setWhatsappMessage',
+      instagramUrl: 'setInstagramUrl', instagramHandle: 'setInstagramHandle',
+      phone: 'setPhone', heroTagline: 'setHeroTagline',
+      catalogTitle: 'setCatalogTitle', catalogSubtitle: 'setCatalogSubtitle',
+      aboutTitle: 'setAboutTitle', aboutText1: 'setAboutText1', aboutText2: 'setAboutText2',
+      aboutFeature1: 'setAboutFeature1', aboutFeature2: 'setAboutFeature2', aboutFeature3: 'setAboutFeature3',
+      contactTitle: 'setContactTitle', contactSubtitle: 'setContactSubtitle',
+      footerText: 'setFooterText'
+    };
+
+    async function loadSettings() {
+      try {
+        const res = await ghFetch('contents/settings.json');
+        if (!res.ok) return;
+        const data = await res.json();
+        settingsSha = data.sha;
+        siteSettings = JSON.parse(utf8Base64Decode(data.content));
+        SETTINGS_FIELDS.forEach(key => {
+          const el = document.getElementById(SETTINGS_FIELD_MAP[key]);
+          if (el && siteSettings[key] !== undefined) el.value = siteSettings[key];
+        });
+      } catch (err) {
+        console.error('Settings load error:', err);
+      }
+    }
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('saveSettingsBtn');
+      btn.disabled = true;
+      btn.textContent = 'שומר...';
+
+      try {
+        SETTINGS_FIELDS.forEach(key => {
+          const el = document.getElementById(SETTINGS_FIELD_MAP[key]);
+          if (el) siteSettings[key] = el.value.trim();
+        });
+
+        const content = utf8Base64Encode(JSON.stringify(siteSettings, null, 2));
+        const body = { message: 'Update site settings from admin panel', content };
+        if (settingsSha) body.sha = settingsSha;
+
+        const res = await ghFetch('contents/settings.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.message || 'HTTP ' + res.status);
+        }
+
+        const data = await res.json();
+        settingsSha = data.content.sha;
+        showToast('ההגדרות נשמרו בהצלחה! השינויים יעלו תוך דקה');
+      } catch (err) {
+        console.error('Settings save error:', err);
+        showToast('שגיאה בשמירת הגדרות: ' + err.message);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'שמירת הגדרות';
+    });
   </script>
 </body>
 </html>

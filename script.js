@@ -2,7 +2,9 @@
    ניצן - משהו מתוק | Product Catalog & UI Logic
    ============================================ */
 
-const WHATSAPP_BASE = 'https://wa.me/9720505851612?text=';
+let WHATSAPP_NUMBER = '9720505851612';
+let WHATSAPP_MESSAGE = 'היי ניצן! ראיתי את הקטלוג ואשמח להזמין';
+let siteSettings = null;
 
 let products = [];
 
@@ -123,8 +125,12 @@ const fallbackProducts = [
 ];
 
 function createWhatsAppLink(productName) {
-  const msg = encodeURIComponent(`היי ניצן! ראיתי את הקטלוג ואשמח להזמין: ${productName}`);
-  return `${WHATSAPP_BASE}${msg}`;
+  const msg = encodeURIComponent(`${WHATSAPP_MESSAGE}: ${productName}`);
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+}
+
+function getWhatsAppBaseLink() {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 }
 
 function resolveImageUrl(path) {
@@ -451,6 +457,71 @@ async function loadProductsData() {
   renderProducts();
 }
 
+// --- Load & Apply Site Settings ---
+
+async function loadSiteSettings() {
+  try {
+    const res = await fetch('https://api.github.com/repos/ofekalfasi222-cloud/bakedbynitzan/contents/settings.json', {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) throw new Error('API ' + res.status);
+    const data = await res.json();
+    const raw = atob(data.content.replace(/\n/g, ''));
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    siteSettings = JSON.parse(new TextDecoder().decode(bytes));
+  } catch (err) {
+    try {
+      const res = await fetch('settings.json?v=' + Date.now());
+      if (res.ok) siteSettings = await res.json();
+    } catch (e) { /* use defaults */ }
+  }
+
+  if (!siteSettings) return;
+  const s = siteSettings;
+
+  if (s.whatsappNumber) WHATSAPP_NUMBER = s.whatsappNumber;
+  if (s.whatsappMessage) WHATSAPP_MESSAGE = s.whatsappMessage;
+
+  const waUrl = getWhatsAppBaseLink();
+  document.querySelectorAll('.wa-link').forEach(el => el.href = waUrl);
+  document.querySelectorAll('.wa-link-simple').forEach(el => el.href = `https://wa.me/${WHATSAPP_NUMBER}`);
+
+  if (s.instagramUrl) {
+    document.querySelectorAll('.ig-link').forEach(el => el.href = s.instagramUrl);
+  }
+
+  if (s.phone) {
+    const phoneDigits = s.phone.replace(/[^0-9]/g, '');
+    document.querySelectorAll('.phone-link').forEach(el => el.href = `tel:${phoneDigits}`);
+    const p1 = document.getElementById('contactPhone1');
+    const p2 = document.getElementById('contactPhone2');
+    if (p1) p1.textContent = s.phone;
+    if (p2) p2.textContent = s.phone;
+  }
+
+  if (s.instagramHandle) {
+    const igH = document.getElementById('contactIgHandle');
+    if (igH) igH.textContent = s.instagramHandle;
+  }
+
+  const setText = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+
+  setText('heroTagline', s.heroTagline);
+  setText('catalogTitle', s.catalogTitle);
+  setText('catalogSubtitle', s.catalogSubtitle);
+  setText('aboutTitle', s.aboutTitle);
+  if (s.aboutText1) { const el = document.getElementById('aboutText1'); if (el) el.textContent = s.aboutText1; }
+  if (s.aboutText2) { const el = document.getElementById('aboutText2'); if (el) el.textContent = s.aboutText2; }
+  setText('aboutFeature1', s.aboutFeature1);
+  setText('aboutFeature2', s.aboutFeature2);
+  setText('aboutFeature3', s.aboutFeature3);
+  setText('contactTitle', s.contactTitle);
+  setText('contactSubtitle', s.contactSubtitle);
+  if (s.footerText) { const el = document.getElementById('footerText'); if (el) el.innerHTML = s.footerText; }
+}
+
 // --- Init ---
 
+loadSiteSettings();
 loadProductsData();
