@@ -213,14 +213,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <script src="cloudinary-config.js"></script>
 
   <script>
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    const storage = firebase.storage();
 
     const CATEGORIES = {
       cookies: 'עוגיות',
@@ -377,6 +376,23 @@
       reader.readAsDataURL(file);
     });
 
+    // Cloudinary upload
+    async function uploadToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', cloudinaryConfig.uploadPreset);
+      formData.append('folder', 'baked-by-nitzan');
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
+        { method: 'POST', body: formData }
+      );
+
+      if (!res.ok) throw new Error('שגיאה בהעלאת תמונה');
+      const data = await res.json();
+      return data.secure_url;
+    }
+
     // Save
     document.getElementById('saveBtn').addEventListener('click', async () => {
       const name = document.getElementById('prodName').value.trim();
@@ -403,11 +419,7 @@
         let imageUrl = currentImageUrl;
 
         if (currentImageFile) {
-          const timestamp = Date.now();
-          const ext = currentImageFile.name.split('.').pop();
-          const ref = storage.ref(`products/${timestamp}.${ext}`);
-          await ref.put(currentImageFile);
-          imageUrl = await ref.getDownloadURL();
+          imageUrl = await uploadToCloudinary(currentImageFile);
         }
 
         const productData = {
