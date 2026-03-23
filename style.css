@@ -319,10 +319,21 @@ body {
 .hero-tagline {
   font-size: clamp(1rem, 3vw, 1.3rem);
   color: var(--gray-500);
-  margin-bottom: 40px;
+  margin-bottom: 12px;
   font-weight: 300;
   letter-spacing: 0.05em;
   animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.hero-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  margin-bottom: 36px;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
 }
 
 .hero-cta-group {
@@ -695,6 +706,14 @@ body {
   color: var(--gray-400);
   font-size: 0.95rem;
   direction: ltr;
+}
+
+.location-card {
+  cursor: default;
+}
+
+.location-card p {
+  direction: rtl;
 }
 
 /* ============================================

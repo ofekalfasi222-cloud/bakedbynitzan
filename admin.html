@@ -180,6 +180,10 @@
             <label>מספר טלפון (להצגה)</label>
             <input type="text" id="setPhone" placeholder="050-5851612" dir="ltr">
           </div>
+          <div class="form-group">
+            <label>מיקום / עיר</label>
+            <input type="text" id="setLocation" placeholder="מודיעין-מכבים-רעות">
+          </div>
         </div>
 
         <div class="settings-section">
@@ -672,7 +676,7 @@
 
     const SETTINGS_FIELDS = [
       'whatsappNumber', 'whatsappMessage', 'instagramUrl', 'instagramHandle',
-      'phone', 'heroTagline', 'catalogTitle', 'catalogSubtitle',
+      'phone', 'location', 'heroTagline', 'catalogTitle', 'catalogSubtitle',
       'aboutTitle', 'aboutText1', 'aboutText2',
       'aboutFeature1', 'aboutFeature2', 'aboutFeature3',
       'customOrderTitle', 'customOrderText', 'faqTitle',
@@ -682,7 +686,7 @@
     const SETTINGS_FIELD_MAP = {
       whatsappNumber: 'setWhatsappNumber', whatsappMessage: 'setWhatsappMessage',
       instagramUrl: 'setInstagramUrl', instagramHandle: 'setInstagramHandle',
-      phone: 'setPhone', heroTagline: 'setHeroTagline',
+      phone: 'setPhone', location: 'setLocation', heroTagline: 'setHeroTagline',
       catalogTitle: 'setCatalogTitle', catalogSubtitle: 'setCatalogSubtitle',
       aboutTitle: 'setAboutTitle', aboutText1: 'setAboutText1', aboutText2: 'setAboutText2',
       aboutFeature1: 'setAboutFeature1', aboutFeature2: 'setAboutFeature2', aboutFeature3: 'setAboutFeature3',

@@ -510,6 +510,12 @@ async function loadSiteSettings() {
   const setText = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
 
   setText('heroTagline', s.heroTagline);
+  if (s.location) {
+    const heroLoc = document.getElementById('heroLocation');
+    if (heroLoc) heroLoc.lastChild.textContent = ' ' + s.location;
+    const contactLoc = document.getElementById('contactLocation');
+    if (contactLoc) contactLoc.textContent = s.location;
+  }
   setText('catalogTitle', s.catalogTitle);
   setText('catalogSubtitle', s.catalogSubtitle);
   setText('aboutTitle', s.aboutTitle);
