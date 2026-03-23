@@ -103,6 +103,7 @@
       <input type="password" id="loginToken" placeholder="מפתח GitHub (פעם ראשונה בלבד)" style="display:none;">
       <button id="loginBtn">כניסה</button>
       <div class="login-error" id="loginError">סיסמה שגויה</div>
+      <a href="#" id="resetTokenLink" style="display:none; color:#999; font-size:0.8rem; margin-top:12px; text-decoration:underline; cursor:pointer;">איפוס מפתח</a>
     </div>
   </div>
 
@@ -196,7 +197,19 @@
 
     if (!GITHUB_TOKEN) {
       document.getElementById('loginToken').style.display = 'block';
+    } else {
+      document.getElementById('resetTokenLink').style.display = 'inline-block';
     }
+
+    document.getElementById('resetTokenLink').addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('gh_token');
+      GITHUB_TOKEN = '';
+      document.getElementById('loginToken').style.display = 'block';
+      document.getElementById('loginToken').value = '';
+      document.getElementById('resetTokenLink').style.display = 'none';
+      showToast('מפתח אופס - הכניסי מפתח חדש');
+    });
 
     function login() {
       const pwd = document.getElementById('loginPassword').value;
@@ -251,6 +264,16 @@
     async function loadProducts() {
       try {
         const res = await ghFetch('contents/products.json');
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('gh_token');
+          GITHUB_TOKEN = '';
+          document.getElementById('adminLayout').style.display = 'none';
+          document.getElementById('loginScreen').style.display = 'flex';
+          document.getElementById('loginToken').style.display = 'block';
+          document.getElementById('resetTokenLink').style.display = 'none';
+          showToast('מפתח לא תקין - הכניסי מפתח חדש');
+          return;
+        }
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         productsSha = data.sha;
