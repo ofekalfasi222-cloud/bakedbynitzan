@@ -449,15 +449,31 @@
       }
     }
 
-    async function saveProducts() {
+    async function refreshProductsSha() {
+      try {
+        const res = await ghFetch('contents/products.json');
+        if (res.ok) {
+          const data = await res.json();
+          productsSha = data.sha;
+        }
+      } catch (e) { /* keep existing sha */ }
+    }
+
+    async function saveProducts(retries = 2) {
       document.getElementById('savingOverlay').classList.add('active');
       try {
+        await refreshProductsSha();
         const content = utf8Base64Encode(JSON.stringify(products, null, 2));
         const res = await ghFetch('contents/products.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'Update products from admin panel', content, sha: productsSha })
         });
+        if (res.status === 409 && retries > 0) {
+          console.warn('SHA conflict, retrying...');
+          document.getElementById('savingOverlay').classList.remove('active');
+          return saveProducts(retries - 1);
+        }
         if (!res.ok) {
           const errData = await res.json();
           throw new Error(errData.message || 'HTTP ' + res.status);
@@ -472,25 +488,37 @@
       document.getElementById('savingOverlay').classList.remove('active');
     }
 
+    let uploadCounter = 0;
+
     async function uploadImageToGithub(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = async () => {
           try {
             const base64 = reader.result.split(',')[1];
+            uploadCounter++;
             const timestamp = Date.now();
+            const rand = Math.random().toString(36).substring(2, 7);
             const ext = file.name.split('.').pop().toLowerCase();
-            const filename = `images/product-${timestamp}.${ext}`;
+            const filename = `images/product-${timestamp}-${rand}-${uploadCounter}.${ext}`;
 
             const res = await ghFetch(`contents/${filename}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ message: `Add product image ${filename}`, content: base64 })
             });
+
+            if (!res.ok) {
+              const errData = await res.json();
+              reject(new Error(`Upload failed (${res.status}): ${errData.message || 'Unknown error'}`));
+              return;
+            }
+
             const data = await res.json();
             resolve(filename);
           } catch (err) { reject(err); }
         };
+        reader.onerror = () => reject(new Error('Failed to read file'));
         reader.readAsDataURL(file);
       });
     }
@@ -507,7 +535,7 @@
       products.forEach((p, i) => {
         const imgs = p.images || (p.image ? [p.image] : []);
         const rawThumb = imgs[0] || '';
-        const thumb = rawThumb ? (rawThumb.startsWith('http') ? rawThumb : `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${rawThumb}`) : 'images/logo.png';
+        const thumb = rawThumb ? (rawThumb.startsWith('http') ? rawThumb : `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${rawThumb}?v=${Date.now()}`) : 'images/logo.png';
         const imgCount = imgs.length > 1 ? ` (${imgs.length} תמונות)` : '';
         const item = document.createElement('div');
         item.className = 'product-item';
@@ -560,7 +588,7 @@
 
     function rawUrl(path) {
       if (!path || path.startsWith('http') || path.startsWith('data:')) return path;
-      return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${path}`;
+      return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${path}?v=${Date.now()}`;
     }
 
     function renderImagesList() {
@@ -610,10 +638,31 @@
 
       try {
         const uploadedPaths = [];
+        const failedUploads = [];
+
         for (let i = 0; i < pendingImages.length; i++) {
           saveBtn.textContent = `מעלה תמונה ${i + 1}/${pendingImages.length}...`;
-          const path = await uploadImageToGithub(pendingImages[i].file);
-          uploadedPaths.push(path);
+          try {
+            const path = await uploadImageToGithub(pendingImages[i].file);
+            uploadedPaths.push(path);
+          } catch (uploadErr) {
+            console.error(`Image ${i + 1} upload failed:`, uploadErr);
+            failedUploads.push(i + 1);
+          }
+          if (i < pendingImages.length - 1) {
+            await new Promise(r => setTimeout(r, 500));
+          }
+        }
+
+        if (failedUploads.length > 0 && uploadedPaths.length === 0 && existingImages.length === 0) {
+          showToast(`כל התמונות נכשלו בהעלאה! בדקי את המפתח.`);
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'שמירה';
+          return;
+        }
+
+        if (failedUploads.length > 0) {
+          showToast(`${failedUploads.length} תמונות נכשלו, ${uploadedPaths.length} הועלו בהצלחה`);
         }
 
         const allImages = [...existingImages, ...uploadedPaths];

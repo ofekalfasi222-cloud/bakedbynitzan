@@ -133,9 +133,12 @@ function getWhatsAppBaseLink() {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 }
 
+const _imgCacheBust = Date.now();
+
 function resolveImageUrl(path) {
-  if (!path || path.startsWith('http')) return path || 'images/logo.png';
-  return `https://raw.githubusercontent.com/bakedbynitzan/bakedbynitzan/main/${path}`;
+  if (!path) return 'images/logo.png';
+  if (path.startsWith('http')) return path;
+  return `https://raw.githubusercontent.com/bakedbynitzan/bakedbynitzan/main/${path}?v=${_imgCacheBust}`;
 }
 
 function getProductImages(product) {
@@ -144,13 +147,23 @@ function getProductImages(product) {
   return ['images/logo.png'];
 }
 
+function imgErrorFallback(img) {
+  if (!img.dataset.retried) {
+    img.dataset.retried = '1';
+    const src = img.src.split('?')[0];
+    img.src = src + '?v=' + Date.now();
+  } else {
+    img.src = 'images/logo.png';
+  }
+}
+
 function createCarouselHTML(images, name) {
   if (images.length <= 1) {
     return `<div class="product-card-image">
-      <img src="${images[0]}" alt="${name}" loading="lazy">
+      <img src="${images[0]}" alt="${name}" loading="lazy" onerror="imgErrorFallback(this)">
     </div>`;
   }
-  const slides = images.map(src => `<div class="carousel-slide"><img src="${src}" alt="${name}" loading="lazy"></div>`).join('');
+  const slides = images.map(src => `<div class="carousel-slide"><img src="${src}" alt="${name}" loading="lazy" onerror="imgErrorFallback(this)"></div>`).join('');
   const dots = images.map((_, i) => `<span class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('');
   return `<div class="product-card-image carousel-container">
     <div class="carousel-track">${slides}</div>
@@ -272,9 +285,9 @@ function openMobileViewer(product) {
 
   let imageHTML;
   if (images.length === 1) {
-    imageHTML = `<img src="${images[0]}" alt="${product.name}" style="display:block;width:100%;height:auto;">`;
+    imageHTML = `<img src="${images[0]}" alt="${product.name}" style="display:block;width:100%;height:auto;" onerror="imgErrorFallback(this)">`;
   } else {
-    const slides = images.map(src => `<div style="min-width:100%;scroll-snap-align:start;"><img src="${src}" alt="${product.name}" style="display:block;width:100%;height:auto;"></div>`).join('');
+    const slides = images.map(src => `<div style="min-width:100%;scroll-snap-align:start;"><img src="${src}" alt="${product.name}" style="display:block;width:100%;height:auto;" onerror="imgErrorFallback(this)"></div>`).join('');
     const dots = images.map((_, i) => `<span class="mv-dot${i === 0 ? ' active' : ''}" style="width:8px;height:8px;border-radius:50%;background:${i === 0 ? '#000' : '#ccc'};transition:background 0.3s;"></span>`).join('');
     imageHTML = `
       <div id="mvTrack" style="display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;">${slides}</div>
@@ -333,9 +346,9 @@ function openModal(product) {
   const imgContainer = document.getElementById('modalImageWrapper');
 
   if (images.length === 1) {
-    imgContainer.innerHTML = `<img class="modal-image" id="modalImage" src="${images[0]}" alt="${product.name}">`;
+    imgContainer.innerHTML = `<img class="modal-image" id="modalImage" src="${images[0]}" alt="${product.name}" onerror="imgErrorFallback(this)">`;
   } else {
-    const slides = images.map(src => `<div class="modal-carousel-slide"><img src="${src}" alt="${product.name}"></div>`).join('');
+    const slides = images.map(src => `<div class="modal-carousel-slide"><img src="${src}" alt="${product.name}" onerror="imgErrorFallback(this)"></div>`).join('');
     const dots = images.map((_, i) => `<span class="modal-carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('');
     imgContainer.innerHTML = `
       <div class="modal-carousel-track" id="modalCarouselTrack">${slides}</div>
