@@ -50,12 +50,15 @@
   },
   {
     "id": 5,
-    "name": "כדורי שוקולד",
+    "name": "כדורי שוקולד 100%",
     "category": "desserts",
     "categoryLabel": "קינוחים",
     "price": 85,
+    "description": "20 יח׳ כדורי שוקולד 100% שוקולד מריר איכותי עם קוקוס וסוכריות קונפטי.",
     "image": "images/chocolate-balls.png",
-    "description": "20 יחידות כדורי שוקולד - קוקוס ושוקולד עם סוכריות צבעוניות. מושלם לאירוח ולמתנה."
+    "images": [
+      "images/chocolate-balls.png"
+    ]
   },
   {
     "id": 6,
