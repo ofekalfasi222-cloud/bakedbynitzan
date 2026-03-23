@@ -287,10 +287,11 @@ function openMobileViewer(product) {
   if (images.length === 1) {
     imageHTML = `<img src="${images[0]}" alt="${product.name}" style="display:block;width:100%;height:auto;" onerror="imgErrorFallback(this)">`;
   } else {
-    const slides = images.map(src => `<div style="min-width:100%;scroll-snap-align:start;"><img src="${src}" alt="${product.name}" style="display:block;width:100%;height:auto;" onerror="imgErrorFallback(this)"></div>`).join('');
+    const slides = images.map(src => `<div style="min-width:100%;width:100%;flex-shrink:0;scroll-snap-align:start;"><img src="${src}" alt="${product.name}" style="display:block;width:100%;height:auto;" onerror="imgErrorFallback(this)"></div>`).join('');
     const dots = images.map((_, i) => `<span class="mv-dot${i === 0 ? ' active' : ''}" style="width:8px;height:8px;border-radius:50%;background:${i === 0 ? '#000' : '#ccc'};transition:background 0.3s;"></span>`).join('');
     imageHTML = `
-      <div id="mvTrack" style="display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;">${slides}</div>
+      <div id="mvTrack" style="display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;">${slides}</div>
+      <style>#mvTrack::-webkit-scrollbar{display:none;}</style>
       <div id="mvDots" style="display:flex;justify-content:center;gap:6px;padding:10px 0;">${dots}</div>
     `;
   }
@@ -447,51 +448,77 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// --- Load products (GitHub API for instant updates, fallback to local file) ---
+// --- GitHub API helper ---
 
-async function loadProductsData() {
-  try {
-    const res = await fetch('https://api.github.com/repos/bakedbynitzan/bakedbynitzan/contents/products.json', {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
-    const raw = atob(data.content.replace(/\n/g, ''));
-    const bytes = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    products = JSON.parse(new TextDecoder().decode(bytes));
-  } catch (err) {
-    try {
-      const res = await fetch('products.json?v=' + Date.now());
-      if (res.ok) products = await res.json();
-      else throw new Error('Local fetch failed');
-    } catch (err2) {
-      products = fallbackProducts;
-    }
-  }
-  renderProducts();
+function decodeGhContent(base64) {
+  const raw = atob(base64.replace(/\n/g, ''));
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
 }
 
-// --- Load & Apply Site Settings ---
+async function fetchFromGhApi(filePath) {
+  const res = await fetch(`https://api.github.com/repos/bakedbynitzan/bakedbynitzan/contents/${filePath}`, {
+    headers: { 'Accept': 'application/vnd.github.v3+json' }
+  });
+  if (!res.ok) throw new Error('API ' + res.status);
+  const data = await res.json();
+  return JSON.parse(decodeGhContent(data.content));
+}
+
+async function fetchLocal(filePath) {
+  const res = await fetch(filePath + '?v=' + Date.now());
+  if (!res.ok) throw new Error('Local ' + res.status);
+  return res.json();
+}
+
+// --- Load products (fast local first, then API update) ---
+
+async function loadProductsData() {
+  let rendered = false;
+
+  try {
+    products = await fetchLocal('products.json');
+    renderProducts();
+    rendered = true;
+  } catch (e) { /* local not available yet */ }
+
+  try {
+    const apiProducts = await fetchFromGhApi('products.json');
+    const changed = JSON.stringify(apiProducts) !== JSON.stringify(products);
+    if (changed || !rendered) {
+      products = apiProducts;
+      renderProducts();
+    }
+  } catch (err) {
+    if (!rendered) {
+      products = fallbackProducts;
+      renderProducts();
+    }
+  }
+}
+
+// --- Load & Apply Site Settings (fast local first, then API) ---
 
 async function loadSiteSettings() {
   try {
-    const res = await fetch('https://api.github.com/repos/bakedbynitzan/bakedbynitzan/contents/settings.json', {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
-    const raw = atob(data.content.replace(/\n/g, ''));
-    const bytes = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-    siteSettings = JSON.parse(new TextDecoder().decode(bytes));
-  } catch (err) {
-    try {
-      const res = await fetch('settings.json?v=' + Date.now());
-      if (res.ok) siteSettings = await res.json();
-    } catch (e) { /* use defaults */ }
-  }
+    siteSettings = await fetchLocal('settings.json');
+    applySiteSettings();
+  } catch (e) { /* local not available yet */ }
 
+  try {
+    const apiSettings = await fetchFromGhApi('settings.json');
+    const changed = JSON.stringify(apiSettings) !== JSON.stringify(siteSettings);
+    if (changed || !siteSettings) {
+      siteSettings = apiSettings;
+      applySiteSettings();
+    }
+  } catch (err) {
+    /* use whatever we have */
+  }
+}
+
+function applySiteSettings() {
   if (!siteSettings) return;
   const s = siteSettings;
 
