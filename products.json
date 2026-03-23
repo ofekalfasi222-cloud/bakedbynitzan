@@ -100,8 +100,11 @@
     "category": "boxes",
     "categoryLabel": "מארזים",
     "price": 300,
+    "description": "עוגייה ענקית קוטר 16 עם תוספות ומילוי לבחירה,  16 יח' מגולגלות קקאו קינדר (ניתן להחליף למגולגלות בטעם אחר).",
     "image": "images/box-giant-cookie.png",
-    "description": "עוגייה ענקית קוטר 16 עם מילוי ומלא תוספות + 16 יח' מגולגלות קינדר. מתנה מרשימה!"
+    "images": [
+      "images/box-giant-cookie.png"
+    ]
   },
   {
     "id": 10,
