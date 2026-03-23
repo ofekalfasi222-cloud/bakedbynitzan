@@ -543,6 +543,8 @@ async function loadSiteSettings() {
     }
   }
 
+  if (s.allergenNotice) { const el = document.getElementById('allergenText'); if (el) el.textContent = s.allergenNotice; }
+
   setText('contactTitle', s.contactTitle);
   setText('contactSubtitle', s.contactSubtitle);
   if (s.footerText) { const el = document.getElementById('footerText'); if (el) el.innerHTML = s.footerText; }

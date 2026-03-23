@@ -265,6 +265,14 @@
         </div>
 
         <div class="settings-section">
+          <h3>הודעת אלרגנים</h3>
+          <div class="form-group">
+            <label>טקסט האזהרה (מופיע מעל הפוטר)</label>
+            <textarea id="setAllergenNotice" rows="3" placeholder="המוצרים מוכנים במטבח ביתי ועלולים להכיל..."></textarea>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <h3>פוטר (תחתית האתר)</h3>
           <div class="form-group">
             <label>טקסט תחתון</label>
@@ -668,7 +676,7 @@
       'aboutTitle', 'aboutText1', 'aboutText2',
       'aboutFeature1', 'aboutFeature2', 'aboutFeature3',
       'customOrderTitle', 'customOrderText', 'faqTitle',
-      'contactTitle', 'contactSubtitle', 'footerText'
+      'allergenNotice', 'contactTitle', 'contactSubtitle', 'footerText'
     ];
 
     const SETTINGS_FIELD_MAP = {
@@ -679,7 +687,7 @@
       aboutTitle: 'setAboutTitle', aboutText1: 'setAboutText1', aboutText2: 'setAboutText2',
       aboutFeature1: 'setAboutFeature1', aboutFeature2: 'setAboutFeature2', aboutFeature3: 'setAboutFeature3',
       customOrderTitle: 'setCustomOrderTitle', customOrderText: 'setCustomOrderText',
-      faqTitle: 'setFaqTitle',
+      faqTitle: 'setFaqTitle', allergenNotice: 'setAllergenNotice',
       contactTitle: 'setContactTitle', contactSubtitle: 'setContactSubtitle',
       footerText: 'setFooterText'
     };

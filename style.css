@@ -848,6 +848,32 @@ body {
 }
 
 /* ============================================
+   Allergen Notice
+   ============================================ */
+
+.allergen-notice {
+  background: #fff8e1;
+  border-top: 1px solid #ffe082;
+  padding: 16px 0;
+}
+
+.allergen-notice p {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #6d5b00;
+  line-height: 1.6;
+  text-align: center;
+  justify-content: center;
+}
+
+.allergen-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ============================================
    Footer
    ============================================ */
 
