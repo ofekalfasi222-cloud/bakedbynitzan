@@ -63,8 +63,8 @@
   {
     "id": 6,
     "name": "מארז קראמבל קוקיז",
-    "category": "cookies",
-    "categoryLabel": "עוגיות",
+    "category": "boxes",
+    "categoryLabel": "מארזים",
     "price": 160,
     "description": "מארז 6 עוגיות בטעמים: קינדר ונוטלה, חצי חצי, אמסטרדם, שוקולד קונפטי, 100% פיסטוק ופירות יער.",
     "image": "images/cookies-6-flavors.png",
