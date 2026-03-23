@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "name": "אלפחורס",
+    "name": "אלפחורס  שלי",
     "category": "cookies",
     "categoryLabel": "עוגיות",
     "price": 60,
-    "image": "images/alfachores.png",
-    "description": "10 יחידות אלפחורס עם מילוי דולסה דה לצ'ה וקוקוס. עוגיית החמאה הקלאסית שנמסה בפה."
+    "description": "10 יחידות אלפחורס עם מילוי דולסה דה לצ'ה וקוקוס. עוגיית החמאה הקלאסית שנמסה בפה.",
+    "image": "images/alfachores.png"
   },
   {
     "id": 2,
