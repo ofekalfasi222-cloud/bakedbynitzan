@@ -266,5 +266,17 @@
       "images/product-1774259100790-jmb22-12.jpeg",
       "images/product-1774259103464-812yo-13.jpeg"
     ]
+  },
+  {
+    "id": 1774259226661,
+    "name": "מארז קאפקייקס",
+    "category": "boxes",
+    "categoryLabel": "מארזים",
+    "price": 145,
+    "description": "12 יח׳ קאפקייקס שוקולד/וניל במילוי נוטלה וזילוף קרם וניל",
+    "image": "images/product-1774259224777-wfzqp-14.jpeg",
+    "images": [
+      "images/product-1774259224777-wfzqp-14.jpeg"
+    ]
   }
 ]
