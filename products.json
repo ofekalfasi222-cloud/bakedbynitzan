@@ -118,18 +118,5 @@
     "image": "images/box-premium-450.png",
     "badge": "VIP",
     "description": "המארז הגדול והמרשים ביותר! עוגיות קראמבל פיסטוק, מגולגלות, בראוניז פיסטוק, גלילי וופל ועוד. מתנה שלא שוכחים."
-  },
-  {
-    "id": 1774228911371,
-    "name": "עוגות קוקוס",
-    "category": "cakes",
-    "categoryLabel": "עוגות",
-    "price": 55,
-    "description": "",
-    "image": "images/product-1774228905472.jpg",
-    "images": [
-      "images/product-1774228905472.jpg"
-    ],
-    "badge": "פופולרי"
   }
 ]
