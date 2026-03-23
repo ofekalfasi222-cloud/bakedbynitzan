@@ -49,8 +49,8 @@ const fallbackProducts = [
   {
     id: 5,
     name: 'כדורי שוקולד',
-    category: 'cookies',
-    categoryLabel: 'עוגיות',
+    category: 'desserts',
+    categoryLabel: 'קינוחים',
     price: 85,
     image: 'images/chocolate-balls.png',
     description: '20 יחידות כדורי שוקולד - קוקוס ושוקולד עם סוכריות צבעוניות. מושלם לאירוח ולמתנה.'
