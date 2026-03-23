@@ -135,7 +135,7 @@ function getWhatsAppBaseLink() {
 
 function resolveImageUrl(path) {
   if (!path || path.startsWith('http')) return path || 'images/logo.png';
-  return `https://raw.githubusercontent.com/ofekalfasi222-cloud/bakedbynitzan/main/${path}`;
+  return `https://raw.githubusercontent.com/bakedbynitzan/bakedbynitzan/main/${path}`;
 }
 
 function getProductImages(product) {
@@ -436,7 +436,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 async function loadProductsData() {
   try {
-    const res = await fetch('https://api.github.com/repos/ofekalfasi222-cloud/bakedbynitzan/contents/products.json', {
+    const res = await fetch('https://api.github.com/repos/bakedbynitzan/bakedbynitzan/contents/products.json', {
       headers: { 'Accept': 'application/vnd.github.v3+json' }
     });
     if (!res.ok) throw new Error('API ' + res.status);
@@ -461,7 +461,7 @@ async function loadProductsData() {
 
 async function loadSiteSettings() {
   try {
-    const res = await fetch('https://api.github.com/repos/ofekalfasi222-cloud/bakedbynitzan/contents/settings.json', {
+    const res = await fetch('https://api.github.com/repos/bakedbynitzan/bakedbynitzan/contents/settings.json', {
       headers: { 'Accept': 'application/vnd.github.v3+json' }
     });
     if (!res.ok) throw new Error('API ' + res.status);
