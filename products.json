@@ -233,5 +233,22 @@
       "images/product-1774258562129-dvc13-3.jpeg",
       "images/product-1774258566919-x5g2j-4.jpeg"
     ]
+  },
+  {
+    "id": 1774258796157,
+    "name": "מחירון עוגות מעוצבות",
+    "category": "cakes",
+    "categoryLabel": "עוגות",
+    "price": 300,
+    "description": "מחירון עוגות מעוצבות : \nקוטר 10 (בנטו) - 160₪-140₪ תלוי בעיצוב \nקוטר 14 - 300₪ \nקוטר 16- 350₪ \nקוטר 18- 400₪ \nקוטר 20- 500₪ \nקוטר 24- 550₪ \n\nתוספת דף סוכר - 40₪ \nתוספות,פירות וקישוטים מיוחדים בתוספת תשלום ותיאום מראש בוואצפ.",
+    "image": "images/product-1774258785695-rmhik-5.jpeg",
+    "images": [
+      "images/product-1774258785695-rmhik-5.jpeg",
+      "images/product-1774258787441-odkjw-6.jpeg",
+      "images/product-1774258789390-bik6k-7.jpeg",
+      "images/product-1774258791648-x6jdq-8.jpeg",
+      "images/product-1774258794309-lk63g-9.jpeg"
+    ],
+    "maxPrice": 550
   }
 ]
