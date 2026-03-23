@@ -952,6 +952,129 @@ body {
 }
 
 /* ============================================
+   Cookie Consent Banner
+   ============================================ */
+
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--gray-200);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 9000;
+  padding: 16px 24px;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cookie-banner.visible {
+  transform: translateY(0);
+}
+
+.cookie-banner.hidden {
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+.cookie-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cookie-content p {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+.cookie-icon {
+  margin-left: 6px;
+}
+
+.cookie-link {
+  color: var(--black);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.cookie-link:hover {
+  color: var(--accent);
+}
+
+.cookie-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cookie-btn {
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.cookie-accept {
+  background: var(--black);
+  color: var(--white);
+}
+
+.cookie-accept:hover {
+  background: var(--gray-800);
+  transform: translateY(-1px);
+}
+
+.cookie-decline {
+  background: transparent;
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+}
+
+.cookie-decline:hover {
+  background: var(--gray-100);
+  color: var(--black);
+}
+
+/* ============================================
+   Footer Legal Links
+   ============================================ */
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+
+.footer-legal a {
+  color: var(--gray-400);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer-legal a:hover {
+  color: var(--white);
+}
+
+.footer-legal-sep {
+  color: var(--gray-700);
+  font-size: 0.7rem;
+}
+
+/* ============================================
    Floating WhatsApp Button
    ============================================ */
 
@@ -1507,6 +1630,32 @@ body {
   .faq-answer p {
     padding: 0 20px 16px;
     font-size: 0.9rem;
+  }
+
+  .cookie-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .cookie-content p {
+    font-size: 0.85rem;
+  }
+
+  .cookie-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cookie-btn {
+    flex: 1;
+    max-width: 140px;
+  }
+
+  .footer-legal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
   }
 
   .whatsapp-float {

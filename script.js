@@ -576,8 +576,35 @@ function initScrollReveal() {
   elements.forEach(el => observer.observe(el));
 }
 
+// --- Cookie Consent ---
+
+function initCookieConsent() {
+  const banner = document.getElementById('cookieBanner');
+  const acceptBtn = document.getElementById('cookieAccept');
+  const declineBtn = document.getElementById('cookieDecline');
+  if (!banner) return;
+
+  const consent = localStorage.getItem('cookie_consent');
+  if (consent) return;
+
+  setTimeout(() => banner.classList.add('visible'), 1500);
+
+  acceptBtn.addEventListener('click', () => {
+    localStorage.setItem('cookie_consent', 'accepted');
+    banner.classList.remove('visible');
+    banner.classList.add('hidden');
+  });
+
+  declineBtn.addEventListener('click', () => {
+    localStorage.setItem('cookie_consent', 'declined');
+    banner.classList.remove('visible');
+    banner.classList.add('hidden');
+  });
+}
+
 // --- Init ---
 
 loadSiteSettings();
 loadProductsData();
 initScrollReveal();
+initCookieConsent();
