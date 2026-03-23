@@ -101,6 +101,12 @@
     .btn-save-settings:hover { background: #333; }
     .btn-save-settings:disabled { background: #ccc; cursor: not-allowed; }
 
+    .faq-edit-item { background: #f9f9f9; border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; }
+    .faq-edit-item input, .faq-edit-item textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; font-family: inherit; margin-bottom: 8px; }
+    .faq-edit-item textarea { resize: vertical; min-height: 60px; }
+    .faq-edit-item input:focus, .faq-edit-item textarea:focus { outline: none; border-color: #000; }
+    .faq-edit-remove { position: absolute; top: 10px; left: 10px; background: #ffe8e8; color: #cc0000; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+
     @media (max-width: 600px) {
       .product-item { flex-wrap: wrap; }
       .product-item img { width: 60px; height: 60px; }
@@ -222,6 +228,28 @@
             <label>תכונה 3</label>
             <input type="text" id="setAboutFeature3" placeholder="עבודת יד עם אהבה">
           </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>באנר הזמנה אישית</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setCustomOrderTitle" placeholder="יש לכם תקציב? בואו נבנה משהו ביחד!">
+          </div>
+          <div class="form-group">
+            <label>טקסט</label>
+            <textarea id="setCustomOrderText" rows="2" placeholder="אפשר להתאים מארז אישי..."></textarea>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>שאלות נפוצות</h3>
+          <div class="form-group">
+            <label>כותרת הסקשן</label>
+            <input type="text" id="setFaqTitle" placeholder="שאלות נפוצות">
+          </div>
+          <div id="faqEditor"></div>
+          <button type="button" class="btn-add" style="margin-top:12px;width:100%;justify-content:center;" id="addFaqBtn">+ שאלה חדשה</button>
         </div>
 
         <div class="settings-section">
@@ -639,6 +667,7 @@
       'phone', 'heroTagline', 'catalogTitle', 'catalogSubtitle',
       'aboutTitle', 'aboutText1', 'aboutText2',
       'aboutFeature1', 'aboutFeature2', 'aboutFeature3',
+      'customOrderTitle', 'customOrderText', 'faqTitle',
       'contactTitle', 'contactSubtitle', 'footerText'
     ];
 
@@ -649,9 +678,13 @@
       catalogTitle: 'setCatalogTitle', catalogSubtitle: 'setCatalogSubtitle',
       aboutTitle: 'setAboutTitle', aboutText1: 'setAboutText1', aboutText2: 'setAboutText2',
       aboutFeature1: 'setAboutFeature1', aboutFeature2: 'setAboutFeature2', aboutFeature3: 'setAboutFeature3',
+      customOrderTitle: 'setCustomOrderTitle', customOrderText: 'setCustomOrderText',
+      faqTitle: 'setFaqTitle',
       contactTitle: 'setContactTitle', contactSubtitle: 'setContactSubtitle',
       footerText: 'setFooterText'
     };
+
+    let faqItems = [];
 
     async function loadSettings() {
       try {
@@ -664,10 +697,37 @@
           const el = document.getElementById(SETTINGS_FIELD_MAP[key]);
           if (el && siteSettings[key] !== undefined) el.value = siteSettings[key];
         });
+        faqItems = siteSettings.faq || [];
+        renderFaqEditor();
       } catch (err) {
         console.error('Settings load error:', err);
       }
     }
+
+    function renderFaqEditor() {
+      const container = document.getElementById('faqEditor');
+      container.innerHTML = '';
+      faqItems.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'faq-edit-item';
+        div.innerHTML = `
+          <button class="faq-edit-remove" onclick="removeFaqItem(${i})">&times;</button>
+          <input type="text" value="${item.q || ''}" placeholder="שאלה" oninput="faqItems[${i}].q=this.value">
+          <textarea placeholder="תשובה" oninput="faqItems[${i}].a=this.value">${item.a || ''}</textarea>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function removeFaqItem(i) {
+      faqItems.splice(i, 1);
+      renderFaqEditor();
+    }
+
+    document.getElementById('addFaqBtn').addEventListener('click', () => {
+      faqItems.push({ q: '', a: '' });
+      renderFaqEditor();
+    });
 
     document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
       const btn = document.getElementById('saveSettingsBtn');
@@ -679,6 +739,7 @@
           const el = document.getElementById(SETTINGS_FIELD_MAP[key]);
           if (el) siteSettings[key] = el.value.trim();
         });
+        siteSettings.faq = faqItems.filter(item => item.q && item.a);
 
         const content = utf8Base64Encode(JSON.stringify(siteSettings, null, 2));
         const body = { message: 'Update site settings from admin panel', content };

@@ -516,6 +516,33 @@ async function loadSiteSettings() {
   setText('aboutFeature1', s.aboutFeature1);
   setText('aboutFeature2', s.aboutFeature2);
   setText('aboutFeature3', s.aboutFeature3);
+  setText('customOrderTitle', s.customOrderTitle);
+  if (s.customOrderText) { const el = document.getElementById('customOrderText'); if (el) el.textContent = s.customOrderText; }
+
+  const customWaMsg = encodeURIComponent(s.whatsappMessage ? s.whatsappMessage.replace('להזמין', 'לבנות מארז לפי תקציב אישי') : 'היי ניצן! אשמח לבנות מארז לפי תקציב אישי');
+  document.querySelectorAll('.wa-link-custom').forEach(el => el.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${customWaMsg}`);
+
+  setText('faqTitle', s.faqTitle);
+
+  if (s.faq && s.faq.length) {
+    const faqList = document.getElementById('faqList');
+    if (faqList) {
+      faqList.innerHTML = '';
+      s.faq.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'faq-item';
+        div.innerHTML = `
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>${item.q}</span>
+            <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>${item.a}</p></div>
+        `;
+        faqList.appendChild(div);
+      });
+    }
+  }
+
   setText('contactTitle', s.contactTitle);
   setText('contactSubtitle', s.contactSubtitle);
   if (s.footerText) { const el = document.getElementById('footerText'); if (el) el.innerHTML = s.footerText; }
