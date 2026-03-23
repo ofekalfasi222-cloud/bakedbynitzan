@@ -60,12 +60,14 @@
     .form-group textarea { resize: vertical; min-height: 80px; }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #000; }
 
-    .image-upload-area { border: 2px dashed #ddd; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; position: relative; overflow: hidden; }
+    .image-upload-area { border: 2px dashed #ddd; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; position: relative; overflow: hidden; }
     .image-upload-area:hover { border-color: #999; background: #fafafa; }
-    .image-upload-area.has-image { padding: 8px; }
-    .image-upload-area img { max-width: 100%; max-height: 200px; border-radius: 8px; }
     .image-upload-area p { color: #999; font-size: 0.9rem; }
     .image-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .images-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .image-thumb { position: relative; width: 90px; height: 90px; border-radius: 8px; overflow: hidden; border: 2px solid #eee; }
+    .image-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .image-thumb .remove-img { position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
 
     .form-actions { display: flex; gap: 12px; margin-top: 24px; }
     .btn-save { flex: 1; padding: 14px; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; }
@@ -156,10 +158,11 @@
         <input type="text" id="prodBadge" placeholder="למשל: פופולרי, VIP">
       </div>
       <div class="form-group">
-        <label>תמונה *</label>
+        <label>תמונות * (אפשר כמה)</label>
+        <div id="imagesContainer"></div>
         <div class="image-upload-area" id="imageUploadArea">
-          <p>לחצי כאן להעלאת תמונה</p>
-          <input type="file" id="prodImage" accept="image/*">
+          <p>+ הוסיפי תמונה</p>
+          <input type="file" id="prodImage" accept="image/*" multiple>
         </div>
       </div>
       <div class="form-actions">
@@ -187,8 +190,8 @@
     let products = [];
     let productsSha = null;
     let editingIndex = null;
-    let currentImageFile = null;
-    let currentImageDataUrl = null;
+    let pendingImages = [];  // { file, dataUrl, uploaded: false }
+    let existingImages = []; // already-uploaded paths
 
     // --- Auth ---
     document.getElementById('loginBtn').addEventListener('click', login);
@@ -341,11 +344,14 @@
       empty.style.display = 'none';
 
       products.forEach((p, i) => {
+        const imgs = p.images || (p.image ? [p.image] : []);
+        const thumb = imgs[0] || 'images/logo.png';
+        const imgCount = imgs.length > 1 ? ` (${imgs.length} תמונות)` : '';
         const item = document.createElement('div');
         item.className = 'product-item';
         item.innerHTML = `
-          <img src="${p.image}" alt="${p.name}" onerror="this.src='images/logo.png'">
-          <div class="product-item-info"><h3>${p.name}</h3><p>${p.description || ''}</p></div>
+          <img src="${thumb}" alt="${p.name}" onerror="this.src='images/logo.png'">
+          <div class="product-item-info"><h3>${p.name}${imgCount}</h3><p>${p.description || ''}</p></div>
           <div class="product-item-meta">
             <span class="product-item-price">${p.price} &#8362;</span>
             ${p.badge ? `<span class="product-item-badge">${p.badge}</span>` : ''}
@@ -366,8 +372,8 @@
 
     function openForm(index = null) {
       editingIndex = index;
-      currentImageFile = null;
-      currentImageDataUrl = null;
+      pendingImages = [];
+      existingImages = [];
       const p = index !== null ? products[index] : null;
 
       document.getElementById('formTitle').textContent = p ? 'עריכת מוצר' : 'מוצר חדש';
@@ -377,33 +383,48 @@
       document.getElementById('prodDescription').value = p ? (p.description || '') : '';
       document.getElementById('prodBadge').value = p ? (p.badge || '') : '';
 
-      const area = document.getElementById('imageUploadArea');
-      if (p && p.image) {
-        area.innerHTML = `<img src="${p.image}" alt="תמונה"><p>לחצי להחלפה</p><input type="file" id="prodImage" accept="image/*">`;
-      } else {
-        area.innerHTML = '<p>לחצי כאן להעלאת תמונה</p><input type="file" id="prodImage" accept="image/*">';
+      if (p) {
+        existingImages = p.images ? [...p.images] : (p.image ? [p.image] : []);
       }
-      area.classList.toggle('has-image', !!(p && p.image));
+      renderImagesList();
 
+      const area = document.getElementById('imageUploadArea');
+      area.innerHTML = '<p>+ הוסיפי תמונה</p><input type="file" id="prodImage" accept="image/*" multiple>';
       document.getElementById('prodImage').addEventListener('change', handleImageSelect);
       document.getElementById('formOverlay').classList.add('active');
     }
 
     function closeForm() { document.getElementById('formOverlay').classList.remove('active'); }
 
+    function renderImagesList() {
+      const container = document.getElementById('imagesContainer');
+      container.innerHTML = '';
+      const list = document.createElement('div');
+      list.className = 'images-list';
+
+      existingImages.forEach((src, i) => {
+        list.innerHTML += `<div class="image-thumb"><img src="${src}"><button class="remove-img" onclick="removeExistingImage(${i})">&times;</button></div>`;
+      });
+      pendingImages.forEach((img, i) => {
+        list.innerHTML += `<div class="image-thumb"><img src="${img.dataUrl}"><button class="remove-img" onclick="removePendingImage(${i})">&times;</button></div>`;
+      });
+      if (existingImages.length || pendingImages.length) container.appendChild(list);
+    }
+
+    function removeExistingImage(i) { existingImages.splice(i, 1); renderImagesList(); }
+    function removePendingImage(i) { pendingImages.splice(i, 1); renderImagesList(); }
+
     function handleImageSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      currentImageFile = file;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        currentImageDataUrl = ev.target.result;
-        const area = document.getElementById('imageUploadArea');
-        area.innerHTML = `<img src="${ev.target.result}" alt="תצוגה מקדימה"><p>לחצי להחלפה</p><input type="file" id="prodImage" accept="image/*">`;
-        area.classList.add('has-image');
-        document.getElementById('prodImage').addEventListener('change', handleImageSelect);
-      };
-      reader.readAsDataURL(file);
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          pendingImages.push({ file, dataUrl: ev.target.result });
+          renderImagesList();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
     }
 
     document.getElementById('saveBtn').addEventListener('click', async () => {
@@ -414,23 +435,28 @@
       const badge = document.getElementById('prodBadge').value.trim();
 
       if (!name || !category || !price) { showToast('נא למלא שם, קטגוריה ומחיר'); return; }
-      if (editingIndex === null && !currentImageFile && !(products[editingIndex]?.image)) { showToast('נא להעלות תמונה'); return; }
+      if (existingImages.length === 0 && pendingImages.length === 0) { showToast('נא להעלות לפחות תמונה אחת'); return; }
 
       const saveBtn = document.getElementById('saveBtn');
       saveBtn.disabled = true;
-      saveBtn.textContent = 'שומר...';
+      saveBtn.textContent = 'מעלה תמונות...';
 
       try {
-        let image = editingIndex !== null ? products[editingIndex].image : '';
-
-        if (currentImageFile) {
-          image = await uploadImageToGithub(currentImageFile);
+        const uploadedPaths = [];
+        for (let i = 0; i < pendingImages.length; i++) {
+          saveBtn.textContent = `מעלה תמונה ${i + 1}/${pendingImages.length}...`;
+          const path = await uploadImageToGithub(pendingImages[i].file);
+          uploadedPaths.push(path);
         }
+
+        const allImages = [...existingImages, ...uploadedPaths];
 
         const productData = {
           id: editingIndex !== null ? products[editingIndex].id : Date.now(),
           name, category, categoryLabel: CATEGORIES[category],
-          price, description, image,
+          price, description,
+          image: allImages[0],
+          images: allImages,
           badge: badge || undefined
         };
 
@@ -440,6 +466,7 @@
           products.push(productData);
         }
 
+        saveBtn.textContent = 'שומר...';
         await saveProducts();
         closeForm();
         renderProductList();

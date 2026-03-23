@@ -127,16 +127,59 @@ function createWhatsAppLink(productName) {
   return `${WHATSAPP_BASE}${msg}`;
 }
 
+function getProductImages(product) {
+  if (product.images && product.images.length) return product.images;
+  if (product.image) return [product.image];
+  return ['images/logo.png'];
+}
+
+function createCarouselHTML(images, name) {
+  if (images.length <= 1) {
+    return `<div class="product-card-image">
+      <img src="${images[0]}" alt="${name}" loading="lazy">
+    </div>`;
+  }
+  const slides = images.map(src => `<div class="carousel-slide"><img src="${src}" alt="${name}" loading="lazy"></div>`).join('');
+  const dots = images.map((_, i) => `<span class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('');
+  return `<div class="product-card-image carousel-container">
+    <div class="carousel-track">${slides}</div>
+    <div class="carousel-dots">${dots}</div>
+  </div>`;
+}
+
+function initCardCarousel(card) {
+  const track = card.querySelector('.carousel-track');
+  if (!track) return;
+  const dots = card.querySelectorAll('.carousel-dot');
+  let currentSlide = 0;
+  const slideCount = dots.length;
+
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / track.offsetWidth);
+    if (idx !== currentSlide && idx >= 0 && idx < slideCount) {
+      currentSlide = idx;
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', e => {
+      e.stopPropagation();
+      const idx = parseInt(dot.dataset.idx);
+      track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
+    });
+  });
+}
+
 function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'product-card';
   card.dataset.category = product.category;
+  const images = getProductImages(product);
 
   card.innerHTML = `
-    <div class="product-card-image">
-      <img src="${product.image}" alt="${product.name}" loading="lazy">
-      ${product.badge ? `<span class="product-card-badge">${product.badge}</span>` : ''}
-    </div>
+    ${createCarouselHTML(images, product.name)}
+    ${product.badge ? `<span class="product-card-badge">${product.badge}</span>` : ''}
     <div class="product-card-content">
       <div class="product-card-category">${product.categoryLabel}</div>
       <h3 class="product-card-title">${product.name}</h3>
@@ -150,6 +193,7 @@ function createProductCard(product) {
     </div>
   `;
 
+  initCardCarousel(card);
   card.addEventListener('click', () => openModal(product));
   return card;
 }
@@ -194,55 +238,42 @@ function isMobile() {
 function openMobileViewer(product) {
   const existing = document.getElementById('mobileViewer');
   if (existing) existing.remove();
+  const images = getProductImages(product);
 
   const viewer = document.createElement('div');
   viewer.id = 'mobileViewer';
   Object.assign(viewer.style, {
-    position: 'fixed',
-    top: '0', left: '0', right: '0', bottom: '0',
-    zIndex: '9999',
-    background: '#fff',
-    overflowY: 'scroll',
-    WebkitOverflowScrolling: 'touch'
+    position: 'fixed', top: '0', left: '0', right: '0', bottom: '0',
+    zIndex: '9999', background: '#fff', overflowY: 'scroll', WebkitOverflowScrolling: 'touch'
   });
 
   const closeBtn = document.createElement('button');
   closeBtn.innerHTML = '&times;';
   Object.assign(closeBtn.style, {
-    position: 'fixed',
-    top: '12px', left: '12px',
-    zIndex: '10000',
-    width: '44px', height: '44px',
-    borderRadius: '50%',
-    border: 'none',
-    background: 'rgba(0,0,0,0.6)',
-    color: '#fff',
-    fontSize: '24px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'fixed', top: '12px', left: '12px', zIndex: '10000',
+    width: '44px', height: '44px', borderRadius: '50%', border: 'none',
+    background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '24px',
+    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
     boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
   });
 
-  const img = document.createElement('img');
-  img.src = product.image;
-  img.alt = product.name;
-  Object.assign(img.style, {
-    display: 'block',
-    width: '100%',
-    height: 'auto',
-    maxWidth: '100%'
-  });
+  let imageHTML;
+  if (images.length === 1) {
+    imageHTML = `<img src="${images[0]}" alt="${product.name}" style="display:block;width:100%;height:auto;">`;
+  } else {
+    const slides = images.map(src => `<div style="min-width:100%;scroll-snap-align:start;"><img src="${src}" alt="${product.name}" style="display:block;width:100%;height:auto;"></div>`).join('');
+    const dots = images.map((_, i) => `<span class="mv-dot${i === 0 ? ' active' : ''}" style="width:8px;height:8px;border-radius:50%;background:${i === 0 ? '#000' : '#ccc'};transition:background 0.3s;"></span>`).join('');
+    imageHTML = `
+      <div id="mvTrack" style="display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;">${slides}</div>
+      <div id="mvDots" style="display:flex;justify-content:center;gap:6px;padding:10px 0;">${dots}</div>
+    `;
+  }
+
+  const container = document.createElement('div');
+  container.innerHTML = imageHTML;
 
   const info = document.createElement('div');
-  Object.assign(info.style, {
-    padding: '20px',
-    fontFamily: "'Heebo', sans-serif",
-    direction: 'rtl',
-    textAlign: 'right'
-  });
-
+  Object.assign(info.style, { padding: '20px', fontFamily: "'Heebo', sans-serif", direction: 'rtl', textAlign: 'right' });
   info.innerHTML = `
     <div style="font-size:0.8rem;color:#999;letter-spacing:0.1em;margin-bottom:6px;">${product.categoryLabel}</div>
     <h3 style="font-family:'Frank Ruhl Libre',serif;font-size:1.5rem;font-weight:900;margin:0 0 12px;">${product.name}</h3>
@@ -256,19 +287,27 @@ function openMobileViewer(product) {
   `;
 
   function closeMobileViewer() {
-    viewer.remove();
-    closeBtn.remove();
-    document.body.style.overflow = '';
+    viewer.remove(); closeBtn.remove(); document.body.style.overflow = '';
   }
-
   closeBtn.addEventListener('click', closeMobileViewer);
 
-  viewer.appendChild(img);
+  viewer.appendChild(container);
   viewer.appendChild(info);
   document.body.appendChild(viewer);
   document.body.appendChild(closeBtn);
   document.body.style.overflow = 'hidden';
   viewer.scrollTop = 0;
+
+  if (images.length > 1) {
+    const track = document.getElementById('mvTrack');
+    const dots = document.querySelectorAll('.mv-dot');
+    if (track && dots.length) {
+      track.addEventListener('scroll', () => {
+        const idx = Math.round(track.scrollLeft / track.offsetWidth);
+        dots.forEach((d, i) => { d.style.background = i === idx ? '#000' : '#ccc'; d.classList.toggle('active', i === idx); });
+      });
+    }
+  }
 }
 
 function openModal(product) {
@@ -277,8 +316,40 @@ function openModal(product) {
     return;
   }
 
-  document.getElementById('modalImage').src = product.image;
-  document.getElementById('modalImage').alt = product.name;
+  const images = getProductImages(product);
+  const imgContainer = document.getElementById('modalImageWrapper');
+
+  if (images.length === 1) {
+    imgContainer.innerHTML = `<img class="modal-image" id="modalImage" src="${images[0]}" alt="${product.name}">`;
+  } else {
+    const slides = images.map(src => `<div class="modal-carousel-slide"><img src="${src}" alt="${product.name}"></div>`).join('');
+    const dots = images.map((_, i) => `<span class="modal-carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('');
+    imgContainer.innerHTML = `
+      <div class="modal-carousel-track" id="modalCarouselTrack">${slides}</div>
+      <div class="modal-carousel-dots">${dots}</div>
+      <button class="modal-carousel-arrow modal-carousel-prev" id="modalPrev">&#8250;</button>
+      <button class="modal-carousel-arrow modal-carousel-next" id="modalNext">&#8249;</button>
+    `;
+
+    let currentIdx = 0;
+    const track = document.getElementById('modalCarouselTrack');
+    const allDots = imgContainer.querySelectorAll('.modal-carousel-dot');
+
+    function goToSlide(idx) {
+      currentIdx = idx;
+      track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
+      allDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    document.getElementById('modalPrev').addEventListener('click', () => goToSlide((currentIdx - 1 + images.length) % images.length));
+    document.getElementById('modalNext').addEventListener('click', () => goToSlide((currentIdx + 1) % images.length));
+    allDots.forEach(d => d.addEventListener('click', () => goToSlide(parseInt(d.dataset.idx))));
+    track.addEventListener('scroll', () => {
+      const idx = Math.round(track.scrollLeft / track.offsetWidth);
+      if (idx !== currentIdx) { currentIdx = idx; allDots.forEach((d, i) => d.classList.toggle('active', i === idx)); }
+    });
+  }
+
   document.getElementById('modalCategory').textContent = product.categoryLabel;
   document.getElementById('modalTitle').textContent = product.name;
   document.getElementById('modalDescription').textContent = product.description;
