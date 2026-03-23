@@ -234,34 +234,53 @@
       return res;
     }
 
+    function utf8Base64Decode(base64) {
+      const raw = atob(base64.replace(/\n/g, ''));
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function utf8Base64Encode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary);
+    }
+
     async function loadProducts() {
       try {
         const res = await ghFetch('contents/products.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         productsSha = data.sha;
-        products = JSON.parse(atob(data.content));
+        products = JSON.parse(utf8Base64Decode(data.content));
         renderProductList();
       } catch (err) {
-        console.error(err);
-        showToast('שגיאה בטעינת מוצרים');
+        console.error('Load error:', err);
+        showToast('שגיאה בטעינת מוצרים: ' + err.message);
       }
     }
 
     async function saveProducts() {
       document.getElementById('savingOverlay').classList.add('active');
       try {
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(products, null, 2))));
+        const content = utf8Base64Encode(JSON.stringify(products, null, 2));
         const res = await ghFetch('contents/products.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'Update products from admin panel', content, sha: productsSha })
         });
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.message || 'HTTP ' + res.status);
+        }
         const data = await res.json();
         productsSha = data.content.sha;
         showToast('נשמר בהצלחה! השינויים יעלו תוך דקה');
       } catch (err) {
-        console.error(err);
-        showToast('שגיאה בשמירה');
+        console.error('Save error:', err);
+        showToast('שגיאה בשמירה: ' + err.message);
       }
       document.getElementById('savingOverlay').classList.remove('active');
     }
