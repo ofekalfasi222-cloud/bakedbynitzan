@@ -1926,8 +1926,14 @@ html.a11y-high-contrast .section,
 html.a11y-high-contrast .faq-question,
 html.a11y-high-contrast .contact-card,
 html.a11y-high-contrast .modal,
+html.a11y-high-contrast .modal-info,
+html.a11y-high-contrast .modal-body,
 html.a11y-high-contrast .a11y-panel,
-html.a11y-high-contrast .cookie-banner {
+html.a11y-high-contrast .cookie-banner,
+html.a11y-high-contrast .product-card-content,
+html.a11y-high-contrast .product-card-footer,
+html.a11y-high-contrast #mobileViewer,
+html.a11y-high-contrast #mobileViewer > div {
   background: #111 !important;
   color: #fff !important;
   border-color: #555 !important;
@@ -1935,13 +1941,21 @@ html.a11y-high-contrast .cookie-banner {
 html.a11y-high-contrast .product-card-title,
 html.a11y-high-contrast .product-card-description,
 html.a11y-high-contrast .product-card-category,
+html.a11y-high-contrast .modal-title,
+html.a11y-high-contrast .modal-description,
+html.a11y-high-contrast .modal-category,
+html.a11y-high-contrast .modal-price,
+html.a11y-high-contrast .modal-info *,
+html.a11y-high-contrast #mobileViewer *,
 html.a11y-high-contrast h1, html.a11y-high-contrast h2, html.a11y-high-contrast h3,
-html.a11y-high-contrast p, html.a11y-high-contrast span, html.a11y-high-contrast li {
+html.a11y-high-contrast p, html.a11y-high-contrast span, html.a11y-high-contrast li,
+html.a11y-high-contrast div {
   color: #fff !important;
 }
 html.a11y-high-contrast a { color: #6ec6ff !important; }
 html.a11y-high-contrast .btn, html.a11y-high-contrast .filter-btn,
-html.a11y-high-contrast .product-card-order {
+html.a11y-high-contrast .product-card-order,
+html.a11y-high-contrast .modal-order-btn {
   background: #fff !important;
   color: #000 !important;
 }
@@ -1950,6 +1964,13 @@ html.a11y-high-contrast .filter-btn.active {
   color: #fff !important;
 }
 html.a11y-high-contrast img { filter: contrast(1.2); }
+html.a11y-high-contrast .hero,
+html.a11y-high-contrast .footer,
+html.a11y-high-contrast footer,
+html.a11y-high-contrast nav,
+html.a11y-high-contrast .navbar {
+  background: #000 !important;
+}
 
 /* Accessibility mode: highlight links */
 html.a11y-highlight-links a,
