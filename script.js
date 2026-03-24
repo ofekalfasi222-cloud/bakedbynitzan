@@ -662,9 +662,87 @@ function initCookieConsent() {
   });
 }
 
+// --- Accessibility Widget ---
+
+function initAccessibility() {
+  const toggle = document.getElementById('a11yToggle');
+  const panel = document.getElementById('a11yPanel');
+  const reset = document.getElementById('a11yReset');
+  if (!toggle || !panel) return;
+
+  const A11Y_KEY = 'a11y_settings';
+  const textLevels = ['', 'a11y-large-text', 'a11y-xl-text'];
+
+  function loadSettings() {
+    try { return JSON.parse(localStorage.getItem(A11Y_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveSettings(s) {
+    localStorage.setItem(A11Y_KEY, JSON.stringify(s));
+  }
+
+  function applySettings(settings) {
+    const html = document.documentElement;
+    textLevels.forEach(c => { if (c) html.classList.remove(c); });
+    html.classList.remove('a11y-high-contrast', 'a11y-highlight-links', 'a11y-no-animations');
+
+    if (settings.textLevel && textLevels[settings.textLevel]) {
+      html.classList.add(textLevels[settings.textLevel]);
+    }
+    if (settings.highContrast) html.classList.add('a11y-high-contrast');
+    if (settings.highlightLinks) html.classList.add('a11y-highlight-links');
+    if (settings.noAnimations) html.classList.add('a11y-no-animations');
+
+    panel.querySelectorAll('.a11y-option').forEach(opt => {
+      const key = opt.dataset.a11y;
+      if (key === 'large-text') opt.classList.toggle('active', (settings.textLevel || 0) > 0);
+      if (key === 'high-contrast') opt.classList.toggle('active', !!settings.highContrast);
+      if (key === 'highlight-links') opt.classList.toggle('active', !!settings.highlightLinks);
+      if (key === 'no-animations') opt.classList.toggle('active', !!settings.noAnimations);
+    });
+  }
+
+  let settings = loadSettings();
+  applySettings(settings);
+
+  toggle.addEventListener('click', () => {
+    panel.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!panel.contains(e.target) && e.target !== toggle) {
+      panel.classList.remove('open');
+    }
+  });
+
+  panel.querySelectorAll('.a11y-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const key = opt.dataset.a11y;
+      if (key === 'large-text') {
+        settings.textLevel = ((settings.textLevel || 0) + 1) % textLevels.length;
+      } else if (key === 'high-contrast') {
+        settings.highContrast = !settings.highContrast;
+      } else if (key === 'highlight-links') {
+        settings.highlightLinks = !settings.highlightLinks;
+      } else if (key === 'no-animations') {
+        settings.noAnimations = !settings.noAnimations;
+      }
+      saveSettings(settings);
+      applySettings(settings);
+    });
+  });
+
+  reset.addEventListener('click', () => {
+    settings = {};
+    saveSettings(settings);
+    applySettings(settings);
+  });
+}
+
 // --- Init ---
 
 loadSiteSettings();
 loadProductsData();
 initScrollReveal();
 initCookieConsent();
+initAccessibility();

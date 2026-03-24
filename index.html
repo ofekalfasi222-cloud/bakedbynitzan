@@ -27,7 +27,7 @@
       function gtag(){}
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=22">
+  <link rel="stylesheet" href="style.css?v=23">
   <link rel="icon" href="images/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -325,7 +325,26 @@
     </div>
   </div>
 
-  <script src="script.js?v=22"></script>
+  <!-- Accessibility Widget -->
+  <button class="a11y-toggle" id="a11yToggle" aria-label="תפריט נגישות" title="נגישות">♿</button>
+  <div class="a11y-panel" id="a11yPanel">
+    <h3>♿ נגישות</h3>
+    <div class="a11y-option" data-a11y="large-text">
+      <span class="a11y-option-label"><span class="a11y-option-icon"><span>🔤</span></span>הגדלת טקסט</span>
+    </div>
+    <div class="a11y-option" data-a11y="high-contrast">
+      <span class="a11y-option-label"><span class="a11y-option-icon"><span>🌗</span></span>ניגודיות גבוהה</span>
+    </div>
+    <div class="a11y-option" data-a11y="highlight-links">
+      <span class="a11y-option-label"><span class="a11y-option-icon"><span>🔗</span></span>הדגשת קישורים</span>
+    </div>
+    <div class="a11y-option" data-a11y="no-animations">
+      <span class="a11y-option-label"><span class="a11y-option-icon"><span>⏸️</span></span>עצירת אנימציות</span>
+    </div>
+    <button class="a11y-reset" id="a11yReset">↩️ איפוס הגדרות נגישות</button>
+  </div>
+
+  <script src="script.js?v=23"></script>
 </body>
 </html>
 
