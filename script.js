@@ -706,6 +706,8 @@ function initAccessibility() {
   const reset = document.getElementById('a11yReset');
   if (!toggle || !panel) return;
 
+  localStorage.removeItem('a11y_settings');
+
   const textLevels = ['', 'a11y-large-text', 'a11y-xl-text'];
 
   function applySettings(settings) {
