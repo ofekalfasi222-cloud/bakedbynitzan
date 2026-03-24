@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול קטלוג | ניצן - משהו מתוק</title>
+  <link rel="icon" href="images/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Heebo', sans-serif; background: #f5f5f5; color: #222; min-height: 100vh; }
+
+    .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .login-box { background: #fff; border-radius: 16px; padding: 40px; max-width: 400px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.08); text-align: center; }
+    .login-box img { width: 80px; margin-bottom: 16px; }
+    .login-box h1 { font-size: 1.4rem; margin-bottom: 8px; }
+    .login-box p { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+    .login-box input { width: 100%; padding: 14px 16px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; font-family: inherit; margin-bottom: 12px; }
+    .login-box input:focus { outline: none; border-color: #000; }
+    .login-box button { width: 100%; padding: 14px; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .login-box button:hover { background: #333; }
+    .login-error { color: #e74c3c; font-size: 0.85rem; margin-top: 8px; display: none; }
+
+    .admin-layout { display: none; }
+    .admin-header { background: #000; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .admin-header h1 { font-size: 1.1rem; font-weight: 700; }
+    .admin-header-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-logout { background: none; border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
+    .btn-back-site { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; }
+
+    .admin-content { max-width: 900px; margin: 0 auto; padding: 24px; }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .top-bar h2 { font-size: 1.3rem; }
+    .btn-add { display: flex; align-items: center; gap: 6px; background: #000; color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .btn-add:hover { background: #333; }
+
+    .product-list { display: flex; flex-direction: column; gap: 12px; }
+    .product-item { background: #fff; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .product-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+    .product-item-info { flex: 1; min-width: 0; }
+    .product-item-info h3 { font-size: 1rem; margin-bottom: 4px; }
+    .product-item-info p { font-size: 0.85rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-item-meta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .product-item-price { font-weight: 700; font-size: 1.1rem; white-space: nowrap; }
+    .product-item-badge { background: #f0f0f0; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; }
+    .product-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-edit, .btn-delete { border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .btn-edit { background: #e8f4ff; color: #0066cc; }
+    .btn-delete { background: #ffe8e8; color: #cc0000; }
+
+    .form-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+    .form-overlay.active { display: flex; }
+    .form-box { background: #fff; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 32px; }
+    .form-box h2 { margin-bottom: 20px; font-size: 1.2rem; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 0.9rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.95rem; font-family: inherit; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #000; }
+
+    .image-upload-area { border: 2px dashed #ddd; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; position: relative; overflow: hidden; }
+    .image-upload-area:hover { border-color: #999; background: #fafafa; }
+    .image-upload-area p { color: #999; font-size: 0.9rem; }
+    .image-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .images-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .image-thumb { position: relative; width: 90px; height: 90px; border-radius: 8px; overflow: hidden; border: 2px solid #eee; }
+    .image-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .image-thumb .remove-img { position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+
+    .form-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-save { flex: 1; padding: 14px; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .btn-save:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-cancel { flex: 1; padding: 14px; background: #f0f0f0; color: #333; border: none; border-radius: 10px; font-size: 1rem; font-weight: 500; cursor: pointer; font-family: inherit; }
+
+    .saving-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 300; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+    .saving-overlay.active { display: flex; }
+    .spinner { width: 32px; height: 32px; border: 3px solid #ddd; border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 12px 24px; border-radius: 10px; font-size: 0.9rem; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+    .empty-state p { font-size: 1.1rem; margin-bottom: 16px; }
+
+    .admin-tabs { display: flex; gap: 0; background: #fff; border-bottom: 2px solid #eee; margin-bottom: 24px; border-radius: 12px 12px 0 0; overflow: hidden; }
+    .admin-tab { flex: 1; padding: 14px; border: none; background: #fff; font-family: inherit; font-size: 0.95rem; font-weight: 500; color: #999; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .admin-tab.active { color: #000; font-weight: 700; border-bottom: 3px solid #000; background: #fafafa; }
+    .admin-tab:hover { color: #000; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .settings-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .settings-section h3 { font-size: 1rem; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #eee; color: #333; }
+    .settings-section .form-group { margin-bottom: 14px; }
+    .settings-section .form-group label { font-size: 0.85rem; color: #666; }
+    .settings-section .form-group input, .settings-section .form-group textarea { font-size: 0.9rem; }
+    .btn-save-settings { width: 100%; padding: 14px; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .btn-save-settings:hover { background: #333; }
+    .btn-save-settings:disabled { background: #ccc; cursor: not-allowed; }
+
+    .faq-edit-item { background: #f9f9f9; border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; }
+    .faq-edit-item input, .faq-edit-item textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; font-family: inherit; margin-bottom: 8px; }
+    .faq-edit-item textarea { resize: vertical; min-height: 60px; }
+    .faq-edit-item input:focus, .faq-edit-item textarea:focus { outline: none; border-color: #000; }
+    .faq-edit-remove { position: absolute; top: 10px; left: 10px; background: #ffe8e8; color: #cc0000; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+
+    @media (max-width: 600px) {
+      .product-item { flex-wrap: wrap; }
+      .product-item img { width: 60px; height: 60px; }
+      .product-item-meta { width: 100%; justify-content: space-between; }
+      .form-box { padding: 20px; }
+      .admin-content { padding: 16px; }
+      .settings-section { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <img src="images/logo.png" alt="ניצן">
+      <h1>ניהול הקטלוג</h1>
+      <p>כניסה למנהלת בלבד</p>
+      <input type="password" id="loginPassword" placeholder="סיסמה">
+      <input type="password" id="loginToken" placeholder="מפתח GitHub (פעם ראשונה בלבד)" style="display:none;">
+      <button id="loginBtn">כניסה</button>
+      <div class="login-error" id="loginError">סיסמה שגויה</div>
+      <a href="#" id="resetTokenLink" style="display:none; color:#999; font-size:0.8rem; margin-top:12px; text-decoration:underline; cursor:pointer;">איפוס מפתח</a>
+    </div>
+  </div>
+
+  <div class="admin-layout" id="adminLayout">
+    <header class="admin-header">
+      <h1>ניהול קטלוג - ניצן משהו מתוק</h1>
+      <div class="admin-header-actions">
+        <a href="index.html" class="btn-back-site" target="_blank">צפייה באתר</a>
+        <button class="btn-logout" id="logoutBtn">התנתקות</button>
+      </div>
+    </header>
+    <div class="admin-content">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="products">מוצרים</button>
+        <button class="admin-tab" data-tab="settings">הגדרות האתר</button>
+      </div>
+
+      <div class="tab-content active" id="tab-products">
+        <div class="top-bar">
+          <h2>המוצרים שלי</h2>
+          <button class="btn-add" id="addProductBtn">+ מוצר חדש</button>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <p>אין מוצרים עדיין</p>
+        </div>
+        <div class="product-list" id="productList"></div>
+      </div>
+
+      <div class="tab-content" id="tab-settings">
+        <div class="settings-section">
+          <h3>קישורים ופרטי קשר</h3>
+          <div class="form-group">
+            <label>מספר וואטסאפ (עם קידומת מדינה, בלי +)</label>
+            <input type="text" id="setWhatsappNumber" placeholder="9720505851612" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>הודעת ברירת מחדל בוואטסאפ</label>
+            <input type="text" id="setWhatsappMessage" placeholder="היי ניצן! ראיתי את הקטלוג...">
+          </div>
+          <div class="form-group">
+            <label>קישור לאינסטגרם (URL מלא)</label>
+            <input type="text" id="setInstagramUrl" placeholder="https://instagram.com/..." dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>שם המשתמש באינסטגרם</label>
+            <input type="text" id="setInstagramHandle" placeholder="@Bakedbynitzan" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>מספר טלפון (להצגה)</label>
+            <input type="text" id="setPhone" placeholder="050-5851612" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label>מיקום / עיר</label>
+            <input type="text" id="setLocation" placeholder="מודיעין-מכבים-רעות">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור הפתיחה (Hero)</h3>
+          <div class="form-group">
+            <label>משפט תיאור (מתחת ללוגו)</label>
+            <input type="text" id="setHeroTagline" placeholder="קונדיטוריה ביתית | עוגיות | עוגות | קינוחים">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור הקטלוג</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setCatalogTitle" placeholder="הקטלוג שלנו">
+          </div>
+          <div class="form-group">
+            <label>תת-כותרת</label>
+            <input type="text" id="setCatalogSubtitle" placeholder="כל המאפים נאפים טרי בהזמנה...">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור "עלינו"</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setAboutTitle" placeholder="קצת עלינו">
+          </div>
+          <div class="form-group">
+            <label>פסקה ראשונה</label>
+            <textarea id="setAboutText1" rows="3" placeholder="שלום, אני ניצן!..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>פסקה שנייה</label>
+            <textarea id="setAboutText2" rows="3" placeholder="אני מאמינה שכל אירוע..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>תכונה 1</label>
+            <input type="text" id="setAboutFeature1" placeholder="חומרי גלם איכותיים">
+          </div>
+          <div class="form-group">
+            <label>תכונה 2</label>
+            <input type="text" id="setAboutFeature2" placeholder="אפייה טרייה בהזמנה">
+          </div>
+          <div class="form-group">
+            <label>תכונה 3</label>
+            <input type="text" id="setAboutFeature3" placeholder="עבודת יד עם אהבה">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>באנר הזמנה אישית</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setCustomOrderTitle" placeholder="יש לכם תקציב? בואו נבנה משהו ביחד!">
+          </div>
+          <div class="form-group">
+            <label>טקסט</label>
+            <textarea id="setCustomOrderText" rows="2" placeholder="אפשר להתאים מארז אישי..."></textarea>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>שאלות נפוצות</h3>
+          <div class="form-group">
+            <label>כותרת הסקשן</label>
+            <input type="text" id="setFaqTitle" placeholder="שאלות נפוצות">
+          </div>
+          <div id="faqEditor"></div>
+          <button type="button" class="btn-add" style="margin-top:12px;width:100%;justify-content:center;" id="addFaqBtn">+ שאלה חדשה</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>אזור "יצירת קשר"</h3>
+          <div class="form-group">
+            <label>כותרת</label>
+            <input type="text" id="setContactTitle" placeholder="בואו נדבר">
+          </div>
+          <div class="form-group">
+            <label>תת-כותרת</label>
+            <input type="text" id="setContactSubtitle" placeholder="רוצים להזמין? יש שאלה?...">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>הודעת אלרגנים</h3>
+          <div class="form-group">
+            <label>טקסט האזהרה (מופיע מעל הפוטר)</label>
+            <textarea id="setAllergenNotice" rows="3" placeholder="המוצרים מוכנים במטבח ביתי ועלולים להכיל..."></textarea>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>פוטר (תחתית האתר)</h3>
+          <div class="form-group">
+            <label>טקסט תחתון</label>
+            <input type="text" id="setFooterText" placeholder="© 2026 ניצן - משהו מתוק...">
+          </div>
+        </div>
+
+        <button class="btn-save-settings" id="saveSettingsBtn">שמירת הגדרות</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-overlay" id="formOverlay">
+    <div class="form-box">
+      <h2 id="formTitle">מוצר חדש</h2>
+      <div class="form-group">
+        <label>שם המוצר *</label>
+        <input type="text" id="prodName" placeholder="למשל: אלפחורס">
+      </div>
+      <div class="form-group">
+        <label>קטגוריה *</label>
+        <select id="prodCategory">
+          <option value="cookies">עוגיות</option>
+          <option value="boxes">מארזים</option>
+          <option value="cakes">עוגות</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>מחיר (בש"ח) *</label>
+        <input type="number" id="prodPrice" placeholder="60" min="0" dir="ltr">
+      </div>
+      <div class="form-group">
+        <label>מחיר מקסימום (אופציונלי - לטווח מחירים)</label>
+        <input type="number" id="prodMaxPrice" placeholder="למשל: 160 (ישים טווח 140-160)" min="0" dir="ltr">
+      </div>
+      <div class="form-group">
+        <label>הערת מחיר (אופציונלי)</label>
+        <input type="text" id="prodPriceNote" placeholder="למשל: תלוי עיצוב, לפי גודל">
+      </div>
+      <div class="form-group">
+        <label>תיאור</label>
+        <textarea id="prodDescription" placeholder="תיאור קצר של המוצר..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>תגית (אופציונלי)</label>
+        <input type="text" id="prodBadge" placeholder="למשל: פופולרי, VIP">
+      </div>
+      <div class="form-group">
+        <label>תמונות * (אפשר כמה)</label>
+        <div id="imagesContainer"></div>
+        <div class="image-upload-area" id="imageUploadArea">
+          <p>+ הוסיפי תמונה</p>
+          <input type="file" id="prodImage" accept="image/*" multiple>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-save" id="saveBtn">שמירה</button>
+        <button class="btn-cancel" id="cancelBtn">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="saving-overlay" id="savingOverlay">
+    <div class="spinner"></div>
+    <p>שומר שינויים...</p>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const REPO_OWNER = 'bakedbynitzan';
+    const REPO_NAME = 'bakedbynitzan';
+    const ADMIN_PASSWORD = 'nitzan2026';
+    let GITHUB_TOKEN = localStorage.getItem('gh_token') || '';
+
+    const CATEGORIES = { cookies: 'עוגיות', boxes: 'מארזים', cakes: 'עוגות' };
+
+    let products = [];
+    let productsSha = null;
+    let editingIndex = null;
+    let pendingImages = [];  // { file, dataUrl, uploaded: false }
+    let existingImages = []; // already-uploaded paths
+
+    // --- Auth ---
+    document.getElementById('loginBtn').addEventListener('click', login);
+    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+    document.getElementById('logoutBtn').addEventListener('click', () => { location.reload(); });
+
+    if (!GITHUB_TOKEN) {
+      document.getElementById('loginToken').style.display = 'block';
+    } else {
+      document.getElementById('resetTokenLink').style.display = 'inline-block';
+    }
+
+    document.getElementById('resetTokenLink').addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('gh_token');
+      GITHUB_TOKEN = '';
+      document.getElementById('loginToken').style.display = 'block';
+      document.getElementById('loginToken').value = '';
+      document.getElementById('resetTokenLink').style.display = 'none';
+      showToast('מפתח אופס - הכניסי מפתח חדש');
+    });
+
+    function login() {
+      const pwd = document.getElementById('loginPassword').value;
+      const tokenInput = document.getElementById('loginToken').value.trim();
+      const errorEl = document.getElementById('loginError');
+
+      if (pwd !== ADMIN_PASSWORD) {
+        errorEl.textContent = 'סיסמה שגויה';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if (!GITHUB_TOKEN && !tokenInput) {
+        errorEl.textContent = 'נא להזין מפתח GitHub (פעם ראשונה בלבד)';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if (tokenInput) {
+        GITHUB_TOKEN = tokenInput;
+        localStorage.setItem('gh_token', tokenInput);
+      }
+
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminLayout').style.display = 'block';
+      loadProducts();
+      loadSettings();
+    }
+
+    // --- GitHub API ---
+    async function ghFetch(path, options = {}) {
+      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/${path}`, {
+        ...options,
+        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', ...options.headers }
+      });
+      return res;
+    }
+
+    function utf8Base64Decode(base64) {
+      const raw = atob(base64.replace(/\n/g, ''));
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function utf8Base64Encode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary);
+    }
+
+    async function loadProducts() {
+      try {
+        const res = await ghFetch('contents/products.json');
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('gh_token');
+          GITHUB_TOKEN = '';
+          document.getElementById('adminLayout').style.display = 'none';
+          document.getElementById('loginScreen').style.display = 'flex';
+          document.getElementById('loginToken').style.display = 'block';
+          document.getElementById('resetTokenLink').style.display = 'none';
+          showToast('מפתח לא תקין - הכניסי מפתח חדש');
+          return;
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        productsSha = data.sha;
+        products = JSON.parse(utf8Base64Decode(data.content));
+        renderProductList();
+      } catch (err) {
+        console.error('Load error:', err);
+        showToast('שגיאה בטעינת מוצרים: ' + err.message);
+      }
+    }
+
+    async function refreshProductsSha() {
+      try {
+        const res = await ghFetch('contents/products.json');
+        if (res.ok) {
+          const data = await res.json();
+          productsSha = data.sha;
+        }
+      } catch (e) { /* keep existing sha */ }
+    }
+
+    async function saveProducts(retries = 2) {
+      document.getElementById('savingOverlay').classList.add('active');
+      try {
+        await refreshProductsSha();
+        const content = utf8Base64Encode(JSON.stringify(products, null, 2));
+        const res = await ghFetch('contents/products.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Update products from admin panel', content, sha: productsSha })
+        });
+        if (res.status === 409 && retries > 0) {
+          console.warn('SHA conflict, retrying...');
+          document.getElementById('savingOverlay').classList.remove('active');
+          return saveProducts(retries - 1);
+        }
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.message || 'HTTP ' + res.status);
+        }
+        const data = await res.json();
+        productsSha = data.content.sha;
+        showToast('נשמר בהצלחה! השינויים יעלו תוך דקה');
+      } catch (err) {
+        console.error('Save error:', err);
+        showToast('שגיאה בשמירה: ' + err.message);
+      }
+      document.getElementById('savingOverlay').classList.remove('active');
+    }
+
+    let uploadCounter = 0;
+
+    async function uploadImageToGithub(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const base64 = reader.result.split(',')[1];
+            uploadCounter++;
+            const timestamp = Date.now();
+            const rand = Math.random().toString(36).substring(2, 7);
+            const ext = file.name.split('.').pop().toLowerCase();
+            const filename = `images/product-${timestamp}-${rand}-${uploadCounter}.${ext}`;
+
+            const res = await ghFetch(`contents/${filename}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: `Add product image ${filename}`, content: base64 })
+            });
+
+            if (!res.ok) {
+              const errData = await res.json();
+              reject(new Error(`Upload failed (${res.status}): ${errData.message || 'Unknown error'}`));
+              return;
+            }
+
+            const data = await res.json();
+            resolve(filename);
+          } catch (err) { reject(err); }
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // --- Product List ---
+    function renderProductList() {
+      const list = document.getElementById('productList');
+      const empty = document.getElementById('emptyState');
+      list.innerHTML = '';
+
+      if (products.length === 0) { empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+
+      products.forEach((p, i) => {
+        const imgs = p.images || (p.image ? [p.image] : []);
+        const rawThumb = imgs[0] || '';
+        const thumb = rawThumb ? (rawThumb.startsWith('http') ? rawThumb : `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${rawThumb}?v=${Date.now()}`) : 'images/logo.png';
+        const imgCount = imgs.length > 1 ? ` (${imgs.length} תמונות)` : '';
+        const item = document.createElement('div');
+        item.className = 'product-item';
+        item.innerHTML = `
+          <img src="${thumb}" alt="${p.name}" onerror="this.src='images/logo.png'">
+          <div class="product-item-info"><h3>${p.name}${imgCount}</h3><p>${p.description || ''}</p></div>
+          <div class="product-item-meta">
+            <span class="product-item-price">${p.maxPrice ? p.price + '-' + p.maxPrice : p.price} &#8362;</span>
+            ${p.priceNote ? `<span class="product-item-badge">${p.priceNote}</span>` : ''}
+            ${p.badge ? `<span class="product-item-badge">${p.badge}</span>` : ''}
+          </div>
+          <div class="product-item-actions">
+            <button class="btn-edit" onclick="openForm(${i})">&#9998;</button>
+            <button class="btn-delete" onclick="deleteProduct(${i})">&#128465;</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // --- Form ---
+    document.getElementById('addProductBtn').addEventListener('click', () => openForm());
+    document.getElementById('cancelBtn').addEventListener('click', closeForm);
+    document.getElementById('formOverlay').addEventListener('click', e => { if (e.target.id === 'formOverlay') closeForm(); });
+
+    function openForm(index = null) {
+      editingIndex = index;
+      pendingImages = [];
+      existingImages = [];
+      const p = index !== null ? products[index] : null;
+
+      document.getElementById('formTitle').textContent = p ? 'עריכת מוצר' : 'מוצר חדש';
+      document.getElementById('prodName').value = p ? p.name : '';
+      document.getElementById('prodCategory').value = p ? p.category : 'cookies';
+      document.getElementById('prodPrice').value = p ? p.price : '';
+      document.getElementById('prodMaxPrice').value = p && p.maxPrice ? p.maxPrice : '';
+      document.getElementById('prodPriceNote').value = p && p.priceNote ? p.priceNote : '';
+      document.getElementById('prodDescription').value = p ? (p.description || '') : '';
+      document.getElementById('prodBadge').value = p ? (p.badge || '') : '';
+
+      if (p) {
+        existingImages = p.images ? [...p.images] : (p.image ? [p.image] : []);
+      }
+      renderImagesList();
+
+      const area = document.getElementById('imageUploadArea');
+      area.innerHTML = '<p>+ הוסיפי תמונה</p><input type="file" id="prodImage" accept="image/*" multiple>';
+      document.getElementById('prodImage').addEventListener('change', handleImageSelect);
+      document.getElementById('formOverlay').classList.add('active');
+    }
+
+    function closeForm() { document.getElementById('formOverlay').classList.remove('active'); }
+
+    function rawUrl(path) {
+      if (!path || path.startsWith('http') || path.startsWith('data:')) return path;
+      return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${path}?v=${Date.now()}`;
+    }
+
+    function renderImagesList() {
+      const container = document.getElementById('imagesContainer');
+      container.innerHTML = '';
+      const list = document.createElement('div');
+      list.className = 'images-list';
+
+      existingImages.forEach((src, i) => {
+        list.innerHTML += `<div class="image-thumb"><img src="${rawUrl(src)}"><button class="remove-img" onclick="removeExistingImage(${i})">&times;</button></div>`;
+      });
+      pendingImages.forEach((img, i) => {
+        list.innerHTML += `<div class="image-thumb"><img src="${img.dataUrl}"><button class="remove-img" onclick="removePendingImage(${i})">&times;</button></div>`;
+      });
+      if (existingImages.length || pendingImages.length) container.appendChild(list);
+    }
+
+    function removeExistingImage(i) { existingImages.splice(i, 1); renderImagesList(); }
+    function removePendingImage(i) { pendingImages.splice(i, 1); renderImagesList(); }
+
+    function handleImageSelect(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          pendingImages.push({ file, dataUrl: ev.target.result });
+          renderImagesList();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const name = document.getElementById('prodName').value.trim();
+      const category = document.getElementById('prodCategory').value;
+      const price = parseInt(document.getElementById('prodPrice').value);
+      const maxPriceVal = document.getElementById('prodMaxPrice').value.trim();
+      const maxPrice = maxPriceVal ? parseInt(maxPriceVal) : null;
+      const priceNote = document.getElementById('prodPriceNote').value.trim();
+      const description = document.getElementById('prodDescription').value.trim();
+      const badge = document.getElementById('prodBadge').value.trim();
+
+      if (!name || !category || !price) { showToast('נא למלא שם, קטגוריה ומחיר'); return; }
+      if (existingImages.length === 0 && pendingImages.length === 0) { showToast('נא להעלות לפחות תמונה אחת'); return; }
+
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'מעלה תמונות...';
+
+      try {
+        const uploadedPaths = [];
+        const failedUploads = [];
+
+        for (let i = 0; i < pendingImages.length; i++) {
+          saveBtn.textContent = `מעלה תמונה ${i + 1}/${pendingImages.length}...`;
+          try {
+            const path = await uploadImageToGithub(pendingImages[i].file);
+            uploadedPaths.push(path);
+          } catch (uploadErr) {
+            console.error(`Image ${i + 1} upload failed:`, uploadErr);
+            failedUploads.push(i + 1);
+          }
+          if (i < pendingImages.length - 1) {
+            await new Promise(r => setTimeout(r, 500));
+          }
+        }
+
+        if (failedUploads.length > 0 && uploadedPaths.length === 0 && existingImages.length === 0) {
+          showToast(`כל התמונות נכשלו בהעלאה! בדקי את המפתח.`);
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'שמירה';
+          return;
+        }
+
+        if (failedUploads.length > 0) {
+          showToast(`${failedUploads.length} תמונות נכשלו, ${uploadedPaths.length} הועלו בהצלחה`);
+        }
+
+        const allImages = [...existingImages, ...uploadedPaths];
+
+        const productData = {
+          id: editingIndex !== null ? products[editingIndex].id : Date.now(),
+          name, category, categoryLabel: CATEGORIES[category],
+          price, description,
+          image: allImages[0],
+          images: allImages,
+          badge: badge || undefined,
+          maxPrice: maxPrice || undefined,
+          priceNote: priceNote || undefined
+        };
+
+        if (editingIndex !== null) {
+          products[editingIndex] = productData;
+        } else {
+          products.push(productData);
+        }
+
+        saveBtn.textContent = 'שומר...';
+        await saveProducts();
+        closeForm();
+        renderProductList();
+      } catch (err) {
+        console.error(err);
+        showToast('שגיאה בשמירה: ' + err.message);
+      }
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'שמירה';
+    });
+
+    function deleteProduct(index) {
+      if (!confirm(`למחוק את "${products[index].name}"?`)) return;
+      products.splice(index, 1);
+      saveProducts();
+      renderProductList();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // --- Tabs ---
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // --- Settings ---
+    let siteSettings = {};
+    let settingsSha = null;
+
+    const SETTINGS_FIELDS = [
+      'whatsappNumber', 'whatsappMessage', 'instagramUrl', 'instagramHandle',
+      'phone', 'location', 'heroTagline', 'catalogTitle', 'catalogSubtitle',
+      'aboutTitle', 'aboutText1', 'aboutText2',
+      'aboutFeature1', 'aboutFeature2', 'aboutFeature3',
+      'customOrderTitle', 'customOrderText', 'faqTitle',
+      'allergenNotice', 'contactTitle', 'contactSubtitle', 'footerText'
+    ];
+
+    const SETTINGS_FIELD_MAP = {
+      whatsappNumber: 'setWhatsappNumber', whatsappMessage: 'setWhatsappMessage',
+      instagramUrl: 'setInstagramUrl', instagramHandle: 'setInstagramHandle',
+      phone: 'setPhone', location: 'setLocation', heroTagline: 'setHeroTagline',
+      catalogTitle: 'setCatalogTitle', catalogSubtitle: 'setCatalogSubtitle',
+      aboutTitle: 'setAboutTitle', aboutText1: 'setAboutText1', aboutText2: 'setAboutText2',
+      aboutFeature1: 'setAboutFeature1', aboutFeature2: 'setAboutFeature2', aboutFeature3: 'setAboutFeature3',
+      customOrderTitle: 'setCustomOrderTitle', customOrderText: 'setCustomOrderText',
+      faqTitle: 'setFaqTitle', allergenNotice: 'setAllergenNotice',
+      contactTitle: 'setContactTitle', contactSubtitle: 'setContactSubtitle',
+      footerText: 'setFooterText'
+    };
+
+    let faqItems = [];
+
+    async function loadSettings() {
+      try {
+        const res = await ghFetch('contents/settings.json');
+        if (!res.ok) return;
+        const data = await res.json();
+        settingsSha = data.sha;
+        siteSettings = JSON.parse(utf8Base64Decode(data.content));
+        SETTINGS_FIELDS.forEach(key => {
+          const el = document.getElementById(SETTINGS_FIELD_MAP[key]);
+          if (el && siteSettings[key] !== undefined) el.value = siteSettings[key];
+        });
+        faqItems = siteSettings.faq || [];
+        renderFaqEditor();
+      } catch (err) {
+        console.error('Settings load error:', err);
+      }
+    }
+
+    function renderFaqEditor() {
+      const container = document.getElementById('faqEditor');
+      container.innerHTML = '';
+      faqItems.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'faq-edit-item';
+        div.innerHTML = `
+          <button class="faq-edit-remove" onclick="removeFaqItem(${i})">&times;</button>
+          <input type="text" value="${item.q || ''}" placeholder="שאלה" oninput="faqItems[${i}].q=this.value">
+          <textarea placeholder="תשובה" oninput="faqItems[${i}].a=this.value">${item.a || ''}</textarea>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function removeFaqItem(i) {
+      faqItems.splice(i, 1);
+      renderFaqEditor();
+    }
+
+    document.getElementById('addFaqBtn').addEventListener('click', () => {
+      faqItems.push({ q: '', a: '' });
+      renderFaqEditor();
+    });
+
+    document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('saveSettingsBtn');
+      btn.disabled = true;
+      btn.textContent = 'שומר...';
+
+      try {
+        SETTINGS_FIELDS.forEach(key => {
+          const el = document.getElementById(SETTINGS_FIELD_MAP[key]);
+          if (el) siteSettings[key] = el.value.trim();
+        });
+        siteSettings.faq = faqItems.filter(item => item.q && item.a);
+
+        const content = utf8Base64Encode(JSON.stringify(siteSettings, null, 2));
+        const body = { message: 'Update site settings from admin panel', content };
+        if (settingsSha) body.sha = settingsSha;
+
+        const res = await ghFetch('contents/settings.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.message || 'HTTP ' + res.status);
+        }
+
+        const data = await res.json();
+        settingsSha = data.content.sha;
+        showToast('ההגדרות נשמרו בהצלחה! השינויים יעלו תוך דקה');
+      } catch (err) {
+        console.error('Settings save error:', err);
+        showToast('שגיאה בשמירת הגדרות: ' + err.message);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'שמירת הגדרות';
+    });
+  </script>
+</body>
+</html>
