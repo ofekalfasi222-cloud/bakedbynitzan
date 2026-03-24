@@ -144,6 +144,7 @@
       <div class="admin-tabs">
         <button class="admin-tab active" data-tab="products">מוצרים</button>
         <button class="admin-tab" data-tab="settings">הגדרות האתר</button>
+        <button class="admin-tab" data-tab="analytics">📊 אנליטיקס</button>
       </div>
 
       <div class="tab-content active" id="tab-products">
@@ -285,6 +286,76 @@
         </div>
 
         <button class="btn-save-settings" id="saveSettingsBtn">שמירת הגדרות</button>
+      </div>
+
+      <div class="tab-content" id="tab-analytics">
+        <div class="settings-section" style="text-align:center;padding:30px 20px;">
+          <h2 style="font-size:1.5rem;margin-bottom:8px;">📊 נתוני האתר שלך</h2>
+          <p style="color:#888;margin-bottom:30px;">כל המידע על מי נכנס לאתר, מה הם צופים, ומתי</p>
+
+          <a href="https://analytics.google.com/analytics/web/#/p467789053/reports/dashboard?params=_u..nav%3Dmaui" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;padding:16px 32px;border-radius:12px;text-decoration:none;font-size:1.1rem;font-weight:700;margin-bottom:30px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            פתח את הדשבורד המלא
+          </a>
+        </div>
+
+        <div class="settings-section">
+          <h3>📱 מה תראי שם?</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+            <div style="background:#f0f8ff;padding:20px;border-radius:12px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:8px;">👥</div>
+              <strong>כמות מבקרים</strong>
+              <p style="color:#888;font-size:0.85rem;margin-top:4px;">כמה אנשים נכנסו לאתר</p>
+            </div>
+            <div style="background:#fff8f0;padding:20px;border-radius:12px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:8px;">🕐</div>
+              <strong>שעות שיא</strong>
+              <p style="color:#888;font-size:0.85rem;margin-top:4px;">מתי הכי הרבה אנשים נכנסים</p>
+            </div>
+            <div style="background:#f0fff0;padding:20px;border-radius:12px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:8px;">📱</div>
+              <strong>מכשירים</strong>
+              <p style="color:#888;font-size:0.85rem;margin-top:4px;">פלאפון, מחשב או טאבלט</p>
+            </div>
+            <div style="background:#fff0f0;padding:20px;border-radius:12px;text-align:center;">
+              <div style="font-size:2rem;margin-bottom:8px;">🔗</div>
+              <strong>מאיפה הגיעו</strong>
+              <p style="color:#888;font-size:0.85rem;margin-top:4px;">אינסטגרם, וואטסאפ, גוגל</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>🎯 אירועים מותאמים</h3>
+          <p style="color:#888;margin-bottom:16px;">האירועים האלה נשמרים אוטומטית כל פעם שמישהו עושה פעולה באתר:</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="background:#fff;border:1px solid #eee;padding:16px;border-radius:10px;display:flex;align-items:center;gap:12px;">
+              <span style="font-size:1.5rem;">👁️</span>
+              <div>
+                <strong>צפייה במוצר</strong> <code style="background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:0.8rem;">view_product</code>
+                <p style="color:#888;font-size:0.85rem;">כל פעם שלקוח פותח מוצר - נשמר שם המוצר והקטגוריה</p>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #eee;padding:16px;border-radius:10px;display:flex;align-items:center;gap:12px;">
+              <span style="font-size:1.5rem;">💬</span>
+              <div>
+                <strong>לחיצה על הזמנה</strong> <code style="background:#f0f0f0;padding:2px 8px;border-radius:4px;font-size:0.8rem;">whatsapp_order</code>
+                <p style="color:#888;font-size:0.85rem;">כל פעם שמישהו לוחץ "להזמנה" בוואטסאפ - נשמר שם המוצר</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>💡 טיפים</h3>
+          <ul style="color:#666;line-height:2;padding-right:20px;">
+            <li>נתונים מתחילים להופיע תוך <strong>24-48 שעות</strong> מרגע ההתקנה</li>
+            <li>ב-<strong>"דוחות" &gt; "בזמן אמת"</strong> אפשר לראות מי באתר עכשיו</li>
+            <li>ב-<strong>"דוחות" &gt; "מעורבות" &gt; "אירועים"</strong> תראי את ה-<code>whatsapp_order</code> ו-<code>view_product</code></li>
+            <li>ב-<strong>"דוחות" &gt; "רכישת משתמשים"</strong> תראי מאיפה הלקוחות מגיעים</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
