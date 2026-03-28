@@ -335,5 +335,17 @@
       "images/product-1774726362550-xzgz3-12.jpeg",
       "images/product-1774726365117-24ha1-13.jpeg"
     ]
+  },
+  {
+    "id": 1774726832486,
+    "name": "מארז מיני",
+    "category": "boxes",
+    "categoryLabel": "מארזים",
+    "price": 135,
+    "description": "3 יח׳ אלפחורס \n3 יח׳ קראמבל קוקיז בלונדי&שוקולד חלב \n6 יח׳ מגולגלות קקאו קינדר",
+    "image": "images/product-1774726830348-smkp8-15.jpeg",
+    "images": [
+      "images/product-1774726830348-smkp8-15.jpeg"
+    ]
   }
 ]
