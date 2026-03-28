@@ -300,18 +300,6 @@
     ]
   },
   {
-    "id": 1774260498180,
-    "name": "מארז שוקולד לבן&חלב",
-    "category": "boxes",
-    "categoryLabel": "מארזים",
-    "price": 270,
-    "description": "בראוניז פאדג׳ 16X16, מלח גס, שוקולד לבן&חלב, 8 יח׳ מיני קוקיז שוקולד לבן&חלב, 10 יח׳ קייק פופס שוקולד בציפוי שוקולד חלב",
-    "image": "images/product-1774260496486-9dg9j-4.jpeg",
-    "images": [
-      "images/product-1774260496486-9dg9j-4.jpeg"
-    ]
-  },
-  {
     "id": 1774726253193,
     "name": "מיקס מגולגלות נוטלה&קינדר",
     "category": "cookies",
@@ -321,6 +309,18 @@
     "image": "images/product-1774726250459-am1pq-11.jpeg",
     "images": [
       "images/product-1774726250459-am1pq-11.jpeg"
+    ]
+  },
+  {
+    "id": 1774260498180,
+    "name": "מארז שוקולד לבן&חלב",
+    "category": "boxes",
+    "categoryLabel": "מארזים",
+    "price": 270,
+    "description": "בראוניז פאדג׳ 16X16, מלח גס, שוקולד לבן&חלב, 8 יח׳ מיני קוקיז שוקולד לבן&חלב, 10 יח׳ קייק פופס שוקולד בציפוי שוקולד חלב",
+    "image": "images/product-1774260496486-9dg9j-4.jpeg",
+    "images": [
+      "images/product-1774260496486-9dg9j-4.jpeg"
     ]
   },
   {
