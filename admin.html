@@ -46,9 +46,12 @@
     .product-item-price { font-weight: 700; font-size: 1.1rem; white-space: nowrap; }
     .product-item-badge { background: #f0f0f0; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; }
     .product-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
-    .btn-edit, .btn-delete { border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .btn-edit, .btn-delete, .btn-move { border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
     .btn-edit { background: #e8f4ff; color: #0066cc; }
     .btn-delete { background: #ffe8e8; color: #cc0000; }
+    .btn-move { background: #f0f0f0; color: #333; font-size: 0.9rem; }
+    .btn-move:hover { background: #ddd; }
+    .btn-move:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .form-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
     .form-overlay.active { display: flex; }
@@ -66,8 +69,13 @@
     .image-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
     .images-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
     .image-thumb { position: relative; width: 90px; height: 90px; border-radius: 8px; overflow: hidden; border: 2px solid #eee; }
+    .image-thumb.first-img { border-color: #000; }
     .image-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .image-thumb .remove-img { position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .image-thumb .move-img { position: absolute; bottom: 2px; width: 22px; height: 22px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .image-thumb .move-img.move-right { right: 2px; }
+    .image-thumb .move-img.move-left { left: 2px; }
+    .image-first-label { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; font-size: 9px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
 
     .form-actions { display: flex; gap: 12px; margin-top: 24px; }
     .btn-save { flex: 1; padding: 14px; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; }
@@ -420,8 +428,17 @@
   <script>
     const REPO_OWNER = 'bakedbynitzan';
     const REPO_NAME = 'bakedbynitzan';
-    const ADMIN_PASSWORD = 'nitzan2026';
+    const ADMIN_PWD_HASH = '554c0d29a7a979221a24430e4c654b6939598cc14c6a38bc4c3db7d03ae6b653';
     let GITHUB_TOKEN = localStorage.getItem('gh_token') || '';
+
+    let loginAttempts = 0;
+    let lockoutUntil = 0;
+
+    async function hashPassword(pwd) {
+      const data = new TextEncoder().encode(pwd);
+      const buf = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
     const CATEGORIES = { cookies: 'עוגיות', boxes: 'מארזים', cakes: 'עוגות' };
 
@@ -434,7 +451,11 @@
     // --- Auth ---
     document.getElementById('loginBtn').addEventListener('click', login);
     document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
-    document.getElementById('logoutBtn').addEventListener('click', () => { location.reload(); });
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('gh_token');
+      GITHUB_TOKEN = '';
+      location.reload();
+    });
 
     if (!GITHUB_TOKEN) {
       document.getElementById('loginToken').style.display = 'block';
@@ -452,16 +473,33 @@
       showToast('מפתח אופס - הכניסי מפתח חדש');
     });
 
-    function login() {
+    async function login() {
       const pwd = document.getElementById('loginPassword').value;
       const tokenInput = document.getElementById('loginToken').value.trim();
       const errorEl = document.getElementById('loginError');
 
-      if (pwd !== ADMIN_PASSWORD) {
-        errorEl.textContent = 'סיסמה שגויה';
+      if (Date.now() < lockoutUntil) {
+        const secs = Math.ceil((lockoutUntil - Date.now()) / 1000);
+        errorEl.textContent = `יותר מדי ניסיונות. נסו שוב בעוד ${secs} שניות`;
         errorEl.style.display = 'block';
         return;
       }
+
+      const pwdHash = await hashPassword(pwd);
+      if (pwdHash !== ADMIN_PWD_HASH) {
+        loginAttempts++;
+        if (loginAttempts >= 5) {
+          lockoutUntil = Date.now() + 5 * 60 * 1000;
+          errorEl.textContent = 'נחסמת ל-5 דקות אחרי ניסיונות רבים';
+          loginAttempts = 0;
+        } else {
+          errorEl.textContent = `סיסמה שגויה (${loginAttempts}/5)`;
+        }
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      loginAttempts = 0;
 
       if (!GITHUB_TOKEN && !tokenInput) {
         errorEl.textContent = 'נא להזין מפתח GitHub (פעם ראשונה בלבד)';
@@ -602,6 +640,12 @@
     }
 
     // --- Product List ---
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str || '';
+      return d.innerHTML;
+    }
+
     function renderProductList() {
       const list = document.getElementById('productList');
       const empty = document.getElementById('emptyState');
@@ -618,20 +662,32 @@
         const item = document.createElement('div');
         item.className = 'product-item';
         item.innerHTML = `
-          <img src="${thumb}" alt="${p.name}" onerror="this.src='images/logo.png'">
-          <div class="product-item-info"><h3>${p.name}${imgCount}</h3><p>${p.description || ''}</p></div>
+          <img src="${esc(thumb)}" alt="${esc(p.name)}" onerror="this.src='images/logo.png'">
+          <div class="product-item-info"><h3>${esc(p.name)}${imgCount}</h3><p>${esc(p.description)}</p></div>
           <div class="product-item-meta">
             <span class="product-item-price">${p.maxPrice ? p.price + '-' + p.maxPrice : p.price} &#8362;</span>
-            ${p.priceNote ? `<span class="product-item-badge">${p.priceNote}</span>` : ''}
-            ${p.badge ? `<span class="product-item-badge">${p.badge}</span>` : ''}
+            ${p.priceNote ? `<span class="product-item-badge">${esc(p.priceNote)}</span>` : ''}
+            ${p.badge ? `<span class="product-item-badge">${esc(p.badge)}</span>` : ''}
           </div>
           <div class="product-item-actions">
+            <button class="btn-move" onclick="moveProduct(${i},-1)" title="העבר למעלה" ${i === 0 ? 'disabled' : ''}>&#9650;</button>
+            <button class="btn-move" onclick="moveProduct(${i},1)" title="העבר למטה" ${i === products.length - 1 ? 'disabled' : ''}>&#9660;</button>
             <button class="btn-edit" onclick="openForm(${i})">&#9998;</button>
             <button class="btn-delete" onclick="deleteProduct(${i})">&#128465;</button>
           </div>
         `;
         list.appendChild(item);
       });
+    }
+
+    async function moveProduct(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= products.length) return;
+      const temp = products[index];
+      products[index] = products[newIndex];
+      products[newIndex] = temp;
+      renderProductList();
+      await saveProducts();
     }
 
     // --- Form ---
@@ -675,16 +731,58 @@
     function renderImagesList() {
       const container = document.getElementById('imagesContainer');
       container.innerHTML = '';
+      const allImgs = existingImages.map((src, i) => ({ type: 'existing', index: i, src: rawUrl(src) }))
+        .concat(pendingImages.map((img, i) => ({ type: 'pending', index: i, src: img.dataUrl })));
+
+      if (allImgs.length === 0) return;
+
       const list = document.createElement('div');
       list.className = 'images-list';
 
-      existingImages.forEach((src, i) => {
-        list.innerHTML += `<div class="image-thumb"><img src="${rawUrl(src)}"><button class="remove-img" onclick="removeExistingImage(${i})">&times;</button></div>`;
+      allImgs.forEach((img, globalIdx) => {
+        const isFirst = globalIdx === 0;
+        const isLast = globalIdx === allImgs.length - 1;
+        const moveLeftBtn = globalIdx > 0 ? `<button class="move-img move-left" onclick="moveImage(${globalIdx},-1)" title="הזז שמאלה">&#8594;</button>` : '';
+        const moveRightBtn = !isLast ? `<button class="move-img move-right" onclick="moveImage(${globalIdx},1)" title="הזז ימינה">&#8592;</button>` : '';
+        const firstLabel = isFirst ? '<span class="image-first-label">ראשית</span>' : '';
+        const removeBtn = img.type === 'existing'
+          ? `<button class="remove-img" onclick="removeExistingImage(${img.index})">&times;</button>`
+          : `<button class="remove-img" onclick="removePendingImage(${img.index})">&times;</button>`;
+        list.innerHTML += `<div class="image-thumb${isFirst ? ' first-img' : ''}"><img src="${img.src}">${removeBtn}${moveLeftBtn}${moveRightBtn}${firstLabel}</div>`;
       });
-      pendingImages.forEach((img, i) => {
-        list.innerHTML += `<div class="image-thumb"><img src="${img.dataUrl}"><button class="remove-img" onclick="removePendingImage(${i})">&times;</button></div>`;
-      });
-      if (existingImages.length || pendingImages.length) container.appendChild(list);
+
+      container.appendChild(list);
+    }
+
+    function moveImage(globalIdx, direction) {
+      const totalExisting = existingImages.length;
+      const newIdx = globalIdx + direction;
+      const totalAll = totalExisting + pendingImages.length;
+      if (newIdx < 0 || newIdx >= totalAll) return;
+
+      function getItem(idx) {
+        if (idx < totalExisting) return { type: 'existing', value: existingImages[idx] };
+        return { type: 'pending', value: pendingImages[idx - totalExisting] };
+      }
+      function setItem(idx, item) {
+        if (item.type === 'existing') {
+          if (idx < totalExisting) existingImages[idx] = item.value;
+          else { existingImages.push(item.value); }
+        } else {
+          if (idx >= totalExisting) pendingImages[idx - totalExisting] = item.value;
+          else { pendingImages.unshift(item.value); }
+        }
+      }
+
+      const allArr = existingImages.map(v => ({ type: 'existing', value: v }))
+        .concat(pendingImages.map(v => ({ type: 'pending', value: v })));
+      const temp = allArr[globalIdx];
+      allArr[globalIdx] = allArr[newIdx];
+      allArr[newIdx] = temp;
+
+      existingImages = allArr.filter(a => a.type === 'existing').map(a => a.value);
+      pendingImages = allArr.filter(a => a.type === 'pending').map(a => a.value);
+      renderImagesList();
     }
 
     function removeExistingImage(i) { existingImages.splice(i, 1); renderImagesList(); }

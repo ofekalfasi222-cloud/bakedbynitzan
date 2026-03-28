@@ -11,23 +11,27 @@
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#000000">
   <title>ניצן | משהו מתוק</title>
-  <!-- Google Analytics (disabled for admins) -->
+  <!-- Google Analytics (consent-based, disabled for admins) -->
   <script>
     window._isAdmin = !!localStorage.getItem('gh_token');
-    if (!window._isAdmin) {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window._gaLoaded = false;
+    window._loadGA = function() {
+      if (window._gaLoaded || window._isAdmin) return;
+      window._gaLoaded = true;
       var s = document.createElement('script');
       s.async = true;
       s.src = 'https://www.googletagmanager.com/gtag/js?id=G-S969RKNPCH';
       document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-S969RKNPCH');
-    } else {
-      function gtag(){}
+    };
+    if (!window._isAdmin && localStorage.getItem('cookie_consent') === 'accepted') {
+      window._loadGA();
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=25">
+  <link rel="stylesheet" href="style.css?v=26">
   <link rel="icon" href="images/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -344,7 +348,7 @@
     <button class="a11y-reset" id="a11yReset">↩️ איפוס הגדרות נגישות</button>
   </div>
 
-  <script src="script.js?v=25"></script>
+  <script src="script.js?v=26"></script>
 </body>
 </html>
 
