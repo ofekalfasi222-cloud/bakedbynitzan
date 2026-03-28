@@ -25,19 +25,6 @@
     ]
   },
   {
-    "id": 2,
-    "name": "עוגיות שוקולד חלב&בלונדי",
-    "category": "cookies",
-    "categoryLabel": "עוגיות",
-    "price": 95,
-    "description": "5 יח׳ עוגיות שוקולד חלב ובלונדי - קריספי מבחוץ ורך מבפנים. קוטר 8",
-    "image": "images/product-1774255822948-50zyi-1.jpeg",
-    "images": [
-      "images/product-1774255822948-50zyi-1.jpeg"
-    ],
-    "badge": "פופולרי"
-  },
-  {
     "id": 3,
     "name": "מגולגלות נוטלה וקינדר",
     "category": "cookies",
@@ -48,6 +35,19 @@
     "images": [
       "images/product-1774725820043-awuv6-7.jpeg",
       "images/product-1774725822590-41v13-8.jpeg"
+    ],
+    "badge": "פופולרי"
+  },
+  {
+    "id": 2,
+    "name": "עוגיות שוקולד חלב&בלונדי",
+    "category": "cookies",
+    "categoryLabel": "עוגיות",
+    "price": 95,
+    "description": "5 יח׳ עוגיות שוקולד חלב ובלונדי - קריספי מבחוץ ורך מבפנים. קוטר 8",
+    "image": "images/product-1774255822948-50zyi-1.jpeg",
+    "images": [
+      "images/product-1774255822948-50zyi-1.jpeg"
     ],
     "badge": "פופולרי"
   },
