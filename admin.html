@@ -795,15 +795,36 @@
     function removeExistingImage(i) { existingImages.splice(i, 1); renderImagesList(); }
     function removePendingImage(i) { pendingImages.splice(i, 1); renderImagesList(); }
 
-    function handleImageSelect(e) {
-      const files = Array.from(e.target.files);
-      files.forEach(file => {
+    function compressImage(file, maxWidth = 800, quality = 0.75) {
+      return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = ev => {
-          pendingImages.push({ file, dataUrl: ev.target.result });
-          renderImagesList();
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            canvas.toBlob(blob => {
+              const compressedFile = new File([blob], file.name, { type: 'image/jpeg' });
+              const compressedUrl = URL.createObjectURL(blob);
+              resolve({ file: compressedFile, dataUrl: compressedUrl });
+            }, 'image/jpeg', quality);
+          };
+          img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
+      });
+    }
+
+    function handleImageSelect(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(async file => {
+        const compressed = await compressImage(file);
+        pendingImages.push(compressed);
+        renderImagesList();
       });
       e.target.value = '';
     }

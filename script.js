@@ -146,12 +146,10 @@ function getWhatsAppBaseLink() {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 }
 
-const _imgCacheBust = Date.now();
-
 function resolveImageUrl(path) {
   if (!path) return 'images/logo.png';
   if (path.startsWith('http')) return path;
-  return `https://raw.githubusercontent.com/bakedbynitzan/bakedbynitzan/main/${path}?v=${_imgCacheBust}`;
+  return path;
 }
 
 function getProductImages(product) {
@@ -191,15 +189,28 @@ function formatPriceHTML(product, size = 'normal') {
 function createCarouselHTML(images, name) {
   if (images.length <= 1) {
     return `<div class="product-card-image">
-      <img src="${images[0]}" alt="${name}" loading="lazy" onerror="imgErrorFallback(this)">
+      <img src="${images[0]}" alt="${name}" loading="lazy" width="400" height="400" onerror="imgErrorFallback(this)">
     </div>`;
   }
-  const slides = images.map(src => `<div class="carousel-slide"><img src="${src}" alt="${name}" loading="lazy" onerror="imgErrorFallback(this)"></div>`).join('');
+  const slides = images.map((src, i) =>
+    `<div class="carousel-slide"><img ${i === 0 ? `src="${src}"` : `src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${src}"`} alt="${name}" loading="lazy" width="400" height="400" onerror="imgErrorFallback(this)"></div>`
+  ).join('');
   const dots = images.map((_, i) => `<span class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('');
   return `<div class="product-card-image carousel-container">
     <div class="carousel-track">${slides}</div>
     <div class="carousel-dots">${dots}</div>
   </div>`;
+}
+
+function lazyLoadSlide(track, idx) {
+  const slides = track.querySelectorAll('.carousel-slide img[data-src]');
+  slides.forEach(img => {
+    if (img.dataset.src) {
+      img.src = img.dataset.src;
+      delete img.dataset.src;
+      img.removeAttribute('data-src');
+    }
+  });
 }
 
 function initCardCarousel(card) {
@@ -214,6 +225,7 @@ function initCardCarousel(card) {
     if (idx !== currentSlide && idx >= 0 && idx < slideCount) {
       currentSlide = idx;
       dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      lazyLoadSlide(track, idx);
     }
   });
 
@@ -221,6 +233,7 @@ function initCardCarousel(card) {
     dot.addEventListener('click', e => {
       e.stopPropagation();
       const idx = parseInt(dot.dataset.idx);
+      lazyLoadSlide(track, idx);
       track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
     });
   });
@@ -544,54 +557,39 @@ async function fetchFromGhApi(filePath) {
 }
 
 async function fetchLocal(filePath) {
-  const res = await fetch(filePath + '?v=' + Date.now());
+  const res = await fetch(filePath);
   if (!res.ok) throw new Error('Local ' + res.status);
   return res.json();
 }
 
-// --- Load products (fast local first, then API update) ---
+// --- Load products ---
 
 async function loadProductsData() {
-  let rendered = false;
-
   try {
     products = await fetchLocal('products.json');
     renderProducts();
-    rendered = true;
-  } catch (e) { /* local not available yet */ }
-
-  try {
-    const apiProducts = await fetchFromGhApi('products.json');
-    const changed = JSON.stringify(apiProducts) !== JSON.stringify(products);
-    if (changed || !rendered) {
-      products = apiProducts;
+  } catch (e) {
+    try {
+      products = await fetchFromGhApi('products.json');
       renderProducts();
-    }
-  } catch (err) {
-    if (!rendered) {
+    } catch (err) {
       products = fallbackProducts;
       renderProducts();
     }
   }
 }
 
-// --- Load & Apply Site Settings (fast local first, then API) ---
+// --- Load & Apply Site Settings ---
 
 async function loadSiteSettings() {
   try {
     siteSettings = await fetchLocal('settings.json');
     applySiteSettings();
-  } catch (e) { /* local not available yet */ }
-
-  try {
-    const apiSettings = await fetchFromGhApi('settings.json');
-    const changed = JSON.stringify(apiSettings) !== JSON.stringify(siteSettings);
-    if (changed || !siteSettings) {
-      siteSettings = apiSettings;
+  } catch (e) {
+    try {
+      siteSettings = await fetchFromGhApi('settings.json');
       applySiteSettings();
-    }
-  } catch (err) {
-    /* use whatever we have */
+    } catch (err) { /* use defaults */ }
   }
 }
 
