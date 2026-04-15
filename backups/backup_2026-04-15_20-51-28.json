@@ -1,0 +1,422 @@
+{
+  "timestamp": "2026-04-15T17:51:28.731Z",
+  "trigger": "products",
+  "products": [
+    {
+      "id": 1774256692519,
+      "name": "מיקס מגולגלות 3 טעמים",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 76,
+      "description": "מיקס מגולגלות - 12 יח׳ בטעמים נוטלה,קינדר ודובאי",
+      "image": "images/product-1774256690606-l69sk-5.jpeg",
+      "images": [
+        "images/product-1774256690606-l69sk-5.jpeg"
+      ],
+      "badge": "פופולרי"
+    },
+    {
+      "id": 1,
+      "name": "האלפחורס  שלי",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 60,
+      "description": "10 יחידות אלפחורס עם מילוי ריבת חלב איכותית וקוקוס.",
+      "image": "images/product-1774227278674.jpeg",
+      "images": [
+        "images/product-1774227278674.jpeg"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "מגולגלות נוטלה וקינדר",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 76,
+      "description": "12 יחידות מגולגלות במילוי נוטלה וקינדר,\nשכבות של בצק חמאה עם שוקולד ואצבעות קינדר.",
+      "image": "images/product-1774725820043-awuv6-7.jpeg",
+      "images": [
+        "images/product-1774725820043-awuv6-7.jpeg",
+        "images/product-1774725822590-41v13-8.jpeg"
+      ],
+      "badge": "פופולרי"
+    },
+    {
+      "id": 2,
+      "name": "עוגיות שוקולד חלב&בלונדי",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 95,
+      "description": "5 יח׳ עוגיות שוקולד חלב ובלונדי - קריספי מבחוץ ורך מבפנים. קוטר 8",
+      "image": "images/product-1774255822948-50zyi-1.jpeg",
+      "images": [
+        "images/product-1774255822948-50zyi-1.jpeg"
+      ],
+      "badge": "פופולרי"
+    },
+    {
+      "id": 4,
+      "name": "מגולגלות קקאו קינדר",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 76,
+      "description": "12 יח׳ מגולגלות קקאו קינדר\n בצק חמאה קקאו עם שכבות קרם קינדר ואצבעות קינדר.",
+      "image": "images/product-1774725798226-n33jw-5.jpeg",
+      "images": [
+        "images/product-1774725798226-n33jw-5.jpeg",
+        "images/product-1774725800776-tv1ol-6.jpeg"
+      ],
+      "badge": "פופולרי"
+    },
+    {
+      "id": 12,
+      "name": "מארז דובאי",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 450,
+      "description": "בראוניז קוטר 16 בציפוי קדאיף פיסטוק,\n3 יח׳ קראמבל קוקיז פיסטוק,\n12 יח׳ מגולגלות דובאי,\n8 יחידות גלילי ופל במילוי דובאי וציפוי שוקולד חלב",
+      "image": "images/product-1774233037520.jpeg",
+      "images": [
+        "images/product-1774233037520.jpeg"
+      ],
+      "badge": "VIP"
+    },
+    {
+      "id": 11,
+      "name": "מארז פרימיום",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 340,
+      "description": "חיתוכיות כדורי שוקולד בציפוי גנאש וזילוף שוקולד לבן, 5 יח׳ כדורי דובאי, 14 יח׳ מגולגלות נוטלה ו5 יח׳ קראמבל קוקיז פיסטוק",
+      "image": "images/product-1774233193707-tsbhv-1.jpeg",
+      "images": [
+        "images/product-1774233193707-tsbhv-1.jpeg"
+      ],
+      "badge": "פרימיום"
+    },
+    {
+      "id": 1774257014678,
+      "name": "עוגות מיני בנטו ✨",
+      "category": "cakes",
+      "categoryLabel": "עוגות",
+      "price": 140,
+      "description": "עוגות בנטו קוטר 10 בכל עיצוב שתרצו✨ \nשכבות של טורט שוקולד/וניל, קרם שמנת מילויים ותוספות לבחירה במעמד ההזמנה בוואצפ . \nמחיר - 140₪-160₪ (תלוי בעיצוב)",
+      "image": "images/product-1774257012608-bsyr7-6.jpeg",
+      "images": [
+        "images/product-1774257012608-bsyr7-6.jpeg",
+        "images/product-1774258915032-6txrs-10.jpeg",
+        "images/product-1774258916995-39zza-11.jpeg"
+      ],
+      "maxPrice": 160
+    },
+    {
+      "id": 5,
+      "name": "כדורי שוקולד 100%",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 85,
+      "description": "20 יח׳ כדורי שוקולד 100% שוקולד מריר איכותי עם קוקוס וסוכריות קונפטי.",
+      "image": "images/product-1774256160736-cc97j-3.jpeg",
+      "images": [
+        "images/product-1774256160736-cc97j-3.jpeg"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "מארז קראמבל קוקיז",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 160,
+      "description": "מארז 6 עוגיות בטעמים: קינדר ונוטלה, חצי חצי, אמסטרדם, שוקולד קונפטי, 100% פיסטוק ופירות יער.",
+      "image": "images/cookies-6-flavors.png",
+      "images": [
+        "images/cookies-6-flavors.png"
+      ],
+      "badge": "הנמכר ביותר"
+    },
+    {
+      "id": 7,
+      "name": "מארז קייק פופס&בלונדי",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 200,
+      "description": "12 יחידות קייק פופס פאדג׳ שוקולד בציפוי שוקולד חלב, 8 יחידות עוגיות שוקולד חלב&בלונדי(קוטר 8)",
+      "image": "images/product-1774256351564-63rxh-4.jpeg",
+      "images": [
+        "images/product-1774256351564-63rxh-4.jpeg"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "מארז מגולגלות ובראוניז",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 170,
+      "description": "בראוניז פאדג׳ 16x16 עם מלח גס ונוטלה, 16 יחידות מגולגלות קקאו קינדר (ניתן להחליף למגולגלות בטעם אחר)",
+      "image": "images/box-brownies-megulgalot.png",
+      "images": [
+        "images/box-brownies-megulgalot.png"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "מארז עוגייה ענקית ומגולגלות",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 299,
+      "description": "עוגייה ענקית קוטר 16 עם תוספות ומילוי לבחירה,  16 יח' מגולגלות קקאו קינדר (ניתן להחליף למגולגלות בטעם אחר).",
+      "image": "images/box-giant-cookie.png",
+      "images": [
+        "images/box-giant-cookie.png"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "מארז יום הולדת",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 299,
+      "description": "עוגת שוקולד עסיסית בציפוי גנאש שוקולד מריר&חלב וסוכריות קונפטי, 14 יח׳ מגולגלות נוטלה&קינדר, 5 יח׳ אלפחורס, 7 יח׳ קייק פופס שוקולד חלב. \n*ניתן להוסיף כיתוב*",
+      "image": "images/product-1774260236647-yhxu3-3.jpeg",
+      "images": [
+        "images/product-1774260236647-yhxu3-3.jpeg"
+      ],
+      "badge": "ליום הולדת"
+    },
+    {
+      "id": 1774257180669,
+      "name": "עוגיות ענקיות",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 170,
+      "description": "עוגיות ענקיות בקוטר 16 🍪\nקריספי מבחוץ ורך מבפנים בטעמים ומילויים לבחירה במעמד ההזמנה בוואצפ . \nניתן לקבל בצורת עיגול/ריבוע/לב .",
+      "image": "images/product-1774257178516-z5h3e-8.jpeg",
+      "images": [
+        "images/product-1774257178516-z5h3e-8.jpeg",
+        "images/product-1774257206560-um3l9-9.jpeg"
+      ]
+    },
+    {
+      "id": 1774257470877,
+      "name": "מארז משולב",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 320,
+      "description": "מארז בשילוב טעמים שיתאים לכולם✔️ בראוניז פאדג׳ 16X16 בצורת דמקה קינדר&נוטלה אגוז לוז, 11 יח׳ מגולגלות דובאי&קינדר, 3 יח׳ אלפחורס, 4 יח׳ קראמבל קוקיז פיסטוק, 10 יח׳ כדורי 100% שוקולד מריר",
+      "image": "images/product-1774257463581-21gvv-10.jpeg",
+      "images": [
+        "images/product-1774257463581-21gvv-10.jpeg"
+      ]
+    },
+    {
+      "id": 1774257688992,
+      "name": "מארז S",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 135,
+      "description": "3 יח׳ אלפחורס. 3 יח׳ קראמבל קוקיז פיסטוק, 6 יח׳ מגולגלות דובאי",
+      "image": "images/product-1774257686788-8xgjo-1.jpeg",
+      "images": [
+        "images/product-1774257686788-8xgjo-1.jpeg"
+      ]
+    },
+    {
+      "id": 1774257871984,
+      "name": "מארז פס שוקולד",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 240,
+      "description": "עוגת פס אינגליש קייק שוקולד עסיסית בציפוי גנאש מריר&חלב וסוכריות קונפטי, 6 יח׳ אלפחורס, 6 יח׳ מיני קוקיז(ניתן לבחור טעם), 8 יח׳ מגולגלות קינדר&נוטלה \n*ניתן להוסיף כיתוב*",
+      "image": "images/product-1774257870395-m3anh-2.jpeg",
+      "images": [
+        "images/product-1774257870395-m3anh-2.jpeg",
+        "images/product-1774725871073-khctm-9.jpeg"
+      ]
+    },
+    {
+      "id": 1774259105620,
+      "name": "מארז שוקולדי",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 250,
+      "description": "6 עוגיות קראמבל פיסטוק (ניתן להחליף טעם), 10 יח׳ מגולגלות קקאו נוטלה&קינדר, 6 יח׳ גלילי ופל עם קדאיף&נוטלה בציפוי שוקולד חלב.",
+      "image": "images/product-1774259100790-jmb22-12.jpeg",
+      "images": [
+        "images/product-1774259100790-jmb22-12.jpeg",
+        "images/product-1774259103464-812yo-13.jpeg",
+        "images/product-1774725957556-vdor0-10.jpeg"
+      ]
+    },
+    {
+      "id": 1774258568435,
+      "name": "עוגת גבינה ניו יורק",
+      "category": "cakes",
+      "categoryLabel": "עוגות",
+      "price": 320,
+      "description": "עוגת גבינה ניו יורק עשירה וקרמית. מסקרפונה, שוקולד לבן, גרגירי וניל אמיתי בציפוי שמנת חמוצה על בסיס בצק פריך \n*פירות בהתאם לעונה*",
+      "image": "images/product-1774258562129-dvc13-3.jpeg",
+      "images": [
+        "images/product-1774258562129-dvc13-3.jpeg",
+        "images/product-1774258566919-x5g2j-4.jpeg"
+      ]
+    },
+    {
+      "id": 1774258796157,
+      "name": "מחירון עוגות מעוצבות",
+      "category": "cakes",
+      "categoryLabel": "עוגות",
+      "price": 300,
+      "description": "מחירון עוגות מעוצבות : \nקוטר 10 (בנטו) - 160₪-140₪ תלוי בעיצוב \nקוטר 14 - 300₪ \nקוטר 16- 350₪ \nקוטר 18- 400₪ \nקוטר 20- 500₪ \nקוטר 24- 550₪ \n\nתוספת דף סוכר - 40₪ \nתוספות,פירות וקישוטים מיוחדים בתוספת תשלום ותיאום מראש בוואצפ.",
+      "image": "images/product-1774258785695-rmhik-5.jpeg",
+      "images": [
+        "images/product-1774258785695-rmhik-5.jpeg",
+        "images/product-1774258787441-odkjw-6.jpeg",
+        "images/product-1774258789390-bik6k-7.jpeg",
+        "images/product-1774258791648-x6jdq-8.jpeg",
+        "images/product-1774258794309-lk63g-9.jpeg"
+      ],
+      "maxPrice": 550
+    },
+    {
+      "id": 1774726253193,
+      "name": "מיקס מגולגלות נוטלה&קינדר",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 76,
+      "description": "מיקס שני טעמים- 12 יח׳ מגולגלות קקאו קינדר ומגולגלות נוטלה קינדר",
+      "image": "images/product-1774726250459-am1pq-11.jpeg",
+      "images": [
+        "images/product-1774726250459-am1pq-11.jpeg"
+      ]
+    },
+    {
+      "id": 1774259226661,
+      "name": "מארז קאפקייקס",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 145,
+      "description": "12 יח׳ קאפקייקס שוקולד/וניל במילוי נוטלה וזילוף קרם וניל",
+      "image": "images/product-1774259224777-wfzqp-14.jpeg",
+      "images": [
+        "images/product-1774259224777-wfzqp-14.jpeg",
+        "images/product-1774726615016-kyqbs-14.jpeg"
+      ]
+    },
+    {
+      "id": 1774260135167,
+      "name": "מארז בלונדי&שוקולד חלב",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 399,
+      "description": "בראוניז 16X16 פאדג׳ מלח גס בלונדי&שוקולד חלב,  16 כדורי פאדג׳ בלונדי&שוקולד חלב, 20 יח׳ מגולגלות קינדר&נוטלה",
+      "image": "images/product-1774260132919-6jihy-2.jpeg",
+      "images": [
+        "images/product-1774260132919-6jihy-2.jpeg"
+      ]
+    },
+    {
+      "id": 1774260498180,
+      "name": "מארז שוקולד לבן&חלב",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 270,
+      "description": "בראוניז פאדג׳ 16X16, מלח גס, שוקולד לבן&חלב, 8 יח׳ מיני קוקיז שוקולד לבן&חלב, 10 יח׳ קייק פופס שוקולד בציפוי שוקולד חלב",
+      "image": "images/product-1774260496486-9dg9j-4.jpeg",
+      "images": [
+        "images/product-1774260496486-9dg9j-4.jpeg"
+      ]
+    },
+    {
+      "id": 1774726832486,
+      "name": "מארז מיני",
+      "category": "boxes",
+      "categoryLabel": "מארזים",
+      "price": 135,
+      "description": "3 יח׳ אלפחורס \n3 יח׳ קראמבל קוקיז בלונדי&שוקולד חלב \n6 יח׳ מגולגלות קקאו קינדר",
+      "image": "images/product-1774726830348-smkp8-15.jpeg",
+      "images": [
+        "images/product-1774726830348-smkp8-15.jpeg"
+      ]
+    },
+    {
+      "id": 1775823883311,
+      "name": "עוגיות בצק פריך ריבה",
+      "category": "cookies",
+      "categoryLabel": "עוגיות",
+      "price": 55,
+      "description": "בצק פריך נמס בפה, ריבת פירות איכותית - ביס מושלם ❤️",
+      "image": "images/product-1775823876363-gae3x-2.jpeg",
+      "images": [
+        "images/product-1775823876363-gae3x-2.jpeg",
+        "images/product-1775823868906-6ot9c-1.jpeg"
+      ]
+    },
+    {
+      "id": 1774726366653,
+      "name": "עוגת שוקולד חלב&מריר",
+      "category": "cakes",
+      "categoryLabel": "עוגות",
+      "price": 55,
+      "description": "עוגת שוקולד עסיסית, גנאש שוקולד חלב ומריר ושיבוץ סוכריות קונפטי - מומלץ לאכול עם כפית ישר מהתבנית 😋",
+      "image": "images/product-1774726362550-xzgz3-12.jpeg",
+      "images": [
+        "images/product-1774726362550-xzgz3-12.jpeg",
+        "images/product-1774726365117-24ha1-13.jpeg"
+      ]
+    }
+  ],
+  "settings": {
+    "whatsappNumber": "9720505851612",
+    "whatsappMessage": "היי ניצן! ראיתי את הקטלוג ואשמח להזמין",
+    "instagramUrl": "https://instagram.com/Bakedbynitzan",
+    "instagramHandle": "@Bakedbynitzan",
+    "phone": "050-5851612",
+    "location": "מודיעין-מכבים-רעות",
+    "heroTagline": "קונדיטוריה ביתית | עוגיות | עוגות | קינוחים",
+    "catalogTitle": "הקטלוג שלי",
+    "catalogSubtitle": "כל הקינוחים נאפים טרי בהזמנה מחומרי גלם איכותיים",
+    "aboutTitle": "קצת עלי",
+    "aboutText1": "שלום, אני ניצן! קונדיטורית ביתית עם אהבה גדולה לאפייה ולמטבח. כל מוצר מוכן בעבודת יד, מחומרי גלם ברמה גבוהה, התייחסות לפרטים הקטנים ושילוב טעמים מיוחדים שיוצרים חוויה בלתי נשכחת ✨",
+    "aboutText2": "אני מאמינה שכל אירוע ראוי למשהו מתוק - בין אם זה יום הולדת, חג, מתנה מיוחדת או סתם כי מגיע לכם. מוזמנים לעיין בקטלוג ולבחור לכם משהו מתוק 👩🏽‍🍳",
+    "aboutFeature1": "חומרי גלם איכותיים",
+    "aboutFeature2": "אפייה טרייה בהזמנה",
+    "aboutFeature3": "עבודת יד עם אהבה",
+    "customOrderTitle": "יש לכם תקציב מסויים? בואו נבנה משהו ביחד!",
+    "customOrderText": "אפשר להתאים מארז אישי לפי התקציב שלכם - תגידו לי מה אתם אוהבים ואני אבנה לכם משהו מיוחד",
+    "faqTitle": "שאלות נפוצות",
+    "faq": [
+      {
+        "q": "כמה ימים מראש צריך להזמין?",
+        "a": "עדיפות ל-3 ימים מראש, אבל יכולים לנסות לאתגר אותי בפחות : )"
+      },
+      {
+        "q": "האם יש כשרות?",
+        "a": "אין תעודה אבל כל המוצרים כשרים, הפרדה מלאה של חלב ובשר, שני כיורים חלבי ובשרי, לא עובדת בשבת. \nלגבי חלב נוכרי - חלק מהמוצרים מכילים ניתן לבצע התאמות אם צריך."
+      },
+      {
+        "q": "האם יש משלוחים?",
+        "a": "כרגע לא, איסוף עצמי ממודיעין לאחר אישור ההזמנה מולי בוואטסאפ."
+      },
+      {
+        "q": "אפשרויות תשלום?",
+        "a": "ביט / פייבוקס/מזומן"
+      },
+      {
+        "q": "יש דוכן? פופ-אפ? יריד?",
+        "a": "אני משתתפת מדי פעם בירידים ופופ-אפים! עקבו אחרי באינסטגרם @Bakedbynitzan ושם אני מעדכנת על כל אירוע קרוב : )"
+      },
+      {
+        "q": "מה לגבי אלרגנים?",
+        "a": "המוצרים מוכנים במטבח ביתי שמכיל את כל סוגי האלרגנים, אם יש רגישות או אלרגיה חשוב לציין מראש בהזמנה ולשים לב שהסביבה אינה סטרילית ועלולה להכיל כל סוג של אלרגן."
+      },
+      {
+        "q": "אפשר לבטל הזמנה?",
+        "a": "ביטול עד 48 שעות לפני מועד האיסוף ללא עלות. ביטול מאוחר יותר - המוצרים כבר בהכנה ולא ניתן לבטל. במקרים חריגים דברו איתי ונמצא פתרון."
+      }
+    ],
+    "allergenNotice": "המוצרים מוכנים במטבח ביתי ומכילים או עלולים להכיל ולבוא במגע עם כל סוגי האלרגנים. לבעלי אלרגיות - נא לציין בעת ההזמנה.",
+    "contactTitle": "בואו נדבר",
+    "contactSubtitle": "רוצים להזמין? יש שאלה? דברו איתי!",
+    "footerText": "© 2026 ניצן - משהו מתוק. כל הזכויות שמורות."
+  }
+}
